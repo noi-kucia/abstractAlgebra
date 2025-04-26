@@ -43,6 +43,11 @@ class AbstractStructure(metaclass=ABCMeta):
             elements = elements[:ceil(MAX_STR_ELEMENTS / 2)] + ["..."] + elements[-MAX_STR_ELEMENTS // 2:]
         return f"<{type(self).__name__}: {elements}>"
 
+    @property
+    def name(self) -> str:
+        """Returns the display name of the structure"""
+        return type(self).__name__
+
 
 class StructureElement:
     """
@@ -61,7 +66,7 @@ class StructureElement:
         return self.structure.elements_mul(self, other)
 
     def __str__(self):
-        return str(self.value)
+        return f"<{self.structure.name}: {self.value}>"
 
     @property
     def structure(self):
@@ -116,6 +121,13 @@ class Zn(Group):
         if isinstance(b, int):
             return self((a.value + b) % self.n)
 
+    @override
     @property
     def neutral(self):
         return StructureElement(value=0, structure=self)
+
+    @override
+    @property
+    def name(self) -> str:
+        return f"Z_{self.n}"
+
