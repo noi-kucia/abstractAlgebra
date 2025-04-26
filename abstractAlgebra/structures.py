@@ -115,7 +115,9 @@ class Zn(Group):
     A cyclic group of integers modulo n with additive notation.
     """
 
-    def __init__(self, n):
+    def __init__(self, n: int):
+        assert isinstance(n, int) and n > 0, "n must be non-negative integer"
+
         self.__elements__ = range(n)
         self.n = n
 
