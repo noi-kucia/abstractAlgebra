@@ -38,7 +38,18 @@ class AbstractStructure(metaclass=ABCMeta):
         """
         Every structure that supports inverting must override this method.
         It returns inverse or None if it doesn't exist.
+
         :param a:
+        :return:
+        """
+        return None
+
+    def element_pow(self, power, modulo) -> StructureElement | None:
+        """
+        Every structure that supports powering must override this method.
+
+        :param power:
+        :param modulo:
         :return:
         """
         return None
@@ -74,6 +85,9 @@ class StructureElement:
 
     def __mul__(self, other):
         return self.structure.elements_mul(self, other)
+
+    def __pow__(self, power, modulo=None):
+        return self.structure.element_pow(power, modulo)
 
     def __str__(self):
         return f"<{self.structure.name}: {self.value}>"
