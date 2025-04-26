@@ -112,7 +112,6 @@ class AbstractStructure(metaclass=ABCMeta):
         """Returns the display name of the structure"""
         return type(self).__name__
 
-
 class StructureElement:
     """
     Element of a certain algebraic structure.
@@ -180,7 +179,6 @@ class Group(AbstractStructure, metaclass=ABCMeta):
         """A shortcut for neutral element"""
         return self.neutral
 
-
 class Zn(Group):
     """
     A cyclic group of integers modulo n with additive notation.
@@ -235,4 +233,23 @@ class Zn(Group):
     @property
     def name(self) -> str:
         return f"Z_{self.n}"
+
+class FieldElement(StructureElement):
+    ...
+
+class Field(AbstractStructure, metaclass=ABCMeta):
+    """
+    Algebraic field - https://en.wikipedia.org/wiki/Field_(mathematics)
+    Supports additive and multiplicative notations.
+    """
+
+    @property
+    @abstractmethod
+    def aneutral(self) -> FieldElement:
+        """neutral element of addition"""
+
+    @property
+    @abstractmethod
+    def mneutral(self) -> FieldElement:
+        """neutral element of multiplication"""
 
