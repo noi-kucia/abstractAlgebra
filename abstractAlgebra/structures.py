@@ -23,15 +23,36 @@ class AbstractStructure(metaclass=ABCMeta):
         Every group with addictive notation available must implement this method.
         When some structure element got __add__ call it should pass this call to this method with itself as the first argument.
         Thus, we're guaranteed first argument to be an instance of a current class.
+
+        :param a:
+        :param b:
+        :return:
         """
         raise NotImplementedError
 
     def elements_mul(self, a: StructureElement, b: Any) -> StructureElement:
         """
-        Every group with multiplicative notation available must implement this method.
+        Every structure with multiplicative notation available must implement this method.
         When some structure element got __mul__ call it should pass this call to this method with itself as the first argument.
         Thus, we're guaranteed first argument to be an instance of a current class.
+
+        :param a:
+        :param b:
+        :return:
         """
+        raise NotImplementedError
+
+    def elements_sub(self, a: StructureElement, b: Any) -> StructureElement:
+        """
+        Subtraction by default works like an addition of inverse.
+        Should be overridden by subclasses because of possible poor performance.
+
+        :param a:
+        :param b:
+        :return:
+        """
+        if isinstance(b, StructureElement):
+            return self.elements_add(a, b.inverse)
         raise NotImplementedError
 
     def element_inverse(self, a: StructureElement) -> StructureElement | None:
@@ -82,6 +103,9 @@ class StructureElement:
 
     def __add__(self, other):
         return self.structure.elements_add(self, other)
+
+    def __sub__(self, other):
+        return self.structure.elements_sub(self, other)
 
     def __mul__(self, other):
         return self.structure.elements_mul(self, other)
@@ -151,6 +175,19 @@ class Zn(Group):
         # adding an integer
         if isinstance(b, int):
             return self((a.value + b) % self.n)
+
+    @override
+    def elements_sub(self, a: StructureElement, b: Any) -> StructureElement:
+
+        # subtracting an element of certain structure
+        if isinstance(b, StructureElement):
+            if b.structure is self:
+                return self((a.value - b.value) % self.n)
+            raise AttributeError(f"cannot subtract elements from different groups: {a.structure} and {b.structure}")
+
+        # subtracting an integer
+        if isinstance(b, int):
+            return self((a.value - b) % self.n)
 
     @override
     @property
