@@ -33,6 +33,15 @@ class AbstractStructure(metaclass=ABCMeta):
         """
         NotImplemented
 
+    def element_inverse(self, a) -> StructureElement | None:
+        """
+        Every structure that supports inverting must override this method.
+        It returns inverse or None if it doesn't exist.
+        :param a:
+        :return:
+        """
+        return None
+
     def __iter__(self):
         """Allows iterating over all elements"""
         return self.__elements__.__iter__()
@@ -77,6 +86,12 @@ class StructureElement:
         """Alias for self.structure"""
         return self.structure
 
+    @property
+    @abstractmethod
+    def inverse(self) -> StructureElement | None:
+        """Returns inverse of the element in its structure or None"""
+        return self.structure.element_inverse(self)
+
 
 class Group(AbstractStructure, metaclass=ABCMeta):
     """
@@ -92,6 +107,8 @@ class Group(AbstractStructure, metaclass=ABCMeta):
     def e(self) -> StructureElement:
         """A shortcut for neutral element"""
         return self.neutral
+
+
 
 
 class Zn(Group):
@@ -130,4 +147,8 @@ class Zn(Group):
     @property
     def name(self) -> str:
         return f"Z_{self.n}"
+
+    @override
+    def element_inverse(self, element: StructureElement) -> StructureElement:
+        return self(self.n - element.value)
 
