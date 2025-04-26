@@ -55,12 +55,22 @@ class AbstractStructure(metaclass=ABCMeta):
             return self.elements_add(a, b.inverse)
         raise NotImplementedError
 
-    def element_inverse(self, a: StructureElement) -> StructureElement | None:
+    def element_additive_inverse(self, a: StructureElement) -> StructureElement | None:
         """
-        Every structure that supports inverting must override this method.
+        Every structure that supports additive inverting must override this method.
         It returns inverse or None if it doesn't exist.
 
         :param a:
+        :return:
+        """
+        return None
+
+    def element_multiplicative_inverse(self, s: StructureElement) -> StructureElement | None:
+        """
+        Every structure that supports multiplicative inverting must override this method.
+        It returns inverse or None if it doesn't exist.
+
+        :param s:
         :return:
         """
         return None
@@ -138,15 +148,26 @@ class StructureElement:
         return self.structure
 
     @property
-    @abstractmethod
-    def inverse(self) -> StructureElement | None:
-        """Returns inverse of the element in its structure or None"""
-        return self.structure.element_inverse(self)
+    def ainverse(self) -> StructureElement | None:
+        """Returns inverse of the element in additive notation"""
+        return self.structure.element_additive_inverse(self)
 
+    @property
+    def minverse(self) -> StructureElement | None:
+        """Returns inverse of the element in multiplicative notation"""
+        return self.structure.element_multiplicative_inverse(self)
+
+class GroupElement(StructureElement):
+
+    @property
+    def inverse(self) -> StructureElement:
+        """Alias for additive inverse since on groups there's defined only addition"""
+        return self.ainverse
 
 class Group(AbstractStructure, metaclass=ABCMeta):
     """
     Algebraic group - https://en.wikipedia.org/wiki/Algebraic_group
+    Assumed that groups are defined with addition.
     """
 
     @property
@@ -171,9 +192,9 @@ class Zn(Group):
         self.__elements__ = range(n)
         self.n = n
 
-    def __call__(self, value: int) -> StructureElement:
+    def __call__(self, value: int) -> GroupElement:
         assert isinstance(value, int), "num must be integer"
-        return StructureElement(value=value % self.n, structure=self)
+        return GroupElement(value=value % self.n, structure=self)
 
     @override
     def elements_add(self, a, b):
@@ -189,7 +210,7 @@ class Zn(Group):
             return self((a.value + b) % self.n)
 
     @override
-    def elements_sub(self, a: StructureElement, b: Any) -> StructureElement:
+    def elements_sub(self, a: GroupElement, b: Any) -> GroupElement:
 
         # subtracting an element of certain structure
         if isinstance(b, StructureElement):
@@ -202,16 +223,16 @@ class Zn(Group):
             return self((a.value - b) % self.n)
 
     @override
+    def element_additive_inverse(self, element: GroupElement) -> GroupElement:
+        return self(self.n - element.value)
+
+    @override
     @property
     def neutral(self):
-        return StructureElement(value=0, structure=self)
+        return GroupElement(value=0, structure=self)
 
     @override
     @property
     def name(self) -> str:
         return f"Z_{self.n}"
-
-    @override
-    def element_inverse(self, element: StructureElement) -> StructureElement:
-        return self(self.n - element.value)
 
