@@ -75,9 +75,21 @@ class AbstractStructure(metaclass=ABCMeta):
         """
         return None
 
+    @abstractmethod
+    def __call__(self, value: Any) -> StructureElement:
+        """
+        Returns an element of this structure based on the given value.
+        Must be implemented by subclasses.
+
+        :param value:
+        :return:
+        """
+        raise NotImplementedError
+
     def __iter__(self):
         """Allows iterating over all elements"""
-        return self.__elements__.__iter__()
+        for element in self.__elements__:
+            yield self(value=element)
 
     def __str__(self):
         elements = list(self.__elements__)
@@ -159,9 +171,9 @@ class Zn(Group):
         self.__elements__ = range(n)
         self.n = n
 
-    def __call__(self, num: int) -> StructureElement:
-        assert isinstance(num, int), "num must be integer"
-        return StructureElement(value=num % self.n, structure=self)
+    def __call__(self, value: int) -> StructureElement:
+        assert isinstance(value, int), "num must be integer"
+        return StructureElement(value=value % self.n, structure=self)
 
     @override
     def elements_add(self, a, b):
