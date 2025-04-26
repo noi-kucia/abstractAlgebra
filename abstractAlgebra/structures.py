@@ -80,11 +80,11 @@ class Group(AbstractStructure, metaclass=ABCMeta):
 
     @property
     @abstractmethod
-    def neutral(self):
+    def neutral(self) -> StructureElement:
         """Returns neutral element of the algebraic group"""
 
     @property
-    def e(self):
+    def e(self) -> StructureElement:
         """A shortcut for neutral element"""
         return self.neutral
 
@@ -107,5 +107,6 @@ class Zn(Group):
     def elements_add(self, a, b):
         return self((a.value + b.value) % self.n)
 
+    @property
     def neutral(self):
-        return 0
+        return StructureElement(value=0, group=self)
