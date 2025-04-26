@@ -50,8 +50,8 @@ class StructureElement:
     """
     __structure__: AbstractStructure
 
-    def __init__(self, *, value: Any, group: AbstractStructure):
-        self.__structure__ = group
+    def __init__(self, *, value: Any, structure: AbstractStructure):
+        self.__structure__ = structure
         self.value = value
 
     def __add__(self, other):
@@ -101,7 +101,7 @@ class Zn(Group):
     def __call__(self, num: int) -> StructureElement:
         if not isinstance(num, int):
             raise TypeError
-        return StructureElement(value=num % self.n, group=self)
+        return StructureElement(value=num % self.n, structure=self)
 
     @override
     def elements_add(self, a, b):
@@ -109,4 +109,4 @@ class Zn(Group):
 
     @property
     def neutral(self):
-        return StructureElement(value=0, group=self)
+        return StructureElement(value=0, structure=self)
