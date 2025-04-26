@@ -136,8 +136,7 @@ class Zn(Group):
         self.n = n
 
     def __call__(self, num: int) -> StructureElement:
-        if not isinstance(num, int):
-            raise TypeError
+        assert isinstance(num, int), "num must be integer"
         return StructureElement(value=num % self.n, structure=self)
 
     @override
