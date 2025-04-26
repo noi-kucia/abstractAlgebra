@@ -2,6 +2,7 @@
 This file contains all classes to handle different algebraic structures and operations performed in them.
 Abstract algebra shit it 2 words
 """
+from __future__ import annotations
 
 from abc import ABCMeta, abstractmethod
 from typing import Iterable, override, Any
@@ -17,23 +18,23 @@ class AbstractStructure(metaclass=ABCMeta):
     """
     __elements__: Iterable  # set of all structure elements
 
-    def elements_add(self, a, b):
+    def elements_add(self, a: StructureElement, b: Any) -> StructureElement:
         """
         Every group with addictive notation available must implement this method.
         When some structure element got __add__ call it should pass this call to this method with itself as the first argument.
         Thus, we're guaranteed first argument to be an instance of a current class.
         """
-        NotImplemented
+        raise NotImplementedError
 
-    def elements_mul(self, a, b):
+    def elements_mul(self, a: StructureElement, b: Any) -> StructureElement:
         """
         Every group with multiplicative notation available must implement this method.
         When some structure element got __mul__ call it should pass this call to this method with itself as the first argument.
         Thus, we're guaranteed first argument to be an instance of a current class.
         """
-        NotImplemented
+        raise NotImplementedError
 
-    def element_inverse(self, a) -> StructureElement | None:
+    def element_inverse(self, a: StructureElement) -> StructureElement | None:
         """
         Every structure that supports inverting must override this method.
         It returns inverse or None if it doesn't exist.
@@ -65,7 +66,7 @@ class StructureElement:
     __structure__: AbstractStructure
 
     def __init__(self, *, value: Any, structure: AbstractStructure):
-        self.__structure__ = structure
+        self.__structure__: AbstractStructure = structure
         self.value = value
 
     def __add__(self, other):
@@ -107,8 +108,6 @@ class Group(AbstractStructure, metaclass=ABCMeta):
     def e(self) -> StructureElement:
         """A shortcut for neutral element"""
         return self.neutral
-
-
 
 
 class Zn(Group):
