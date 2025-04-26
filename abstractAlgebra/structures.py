@@ -28,7 +28,7 @@ class AbstractStructure(metaclass=ABCMeta):
         :param b:
         :return:
         """
-        raise NotImplementedError
+        raise NotImplementedError(f"{self.__class__.__name__} does not implement addition")
 
     def elements_mul(self, a: StructureElement, b: Any) -> StructureElement:
         """
@@ -40,7 +40,7 @@ class AbstractStructure(metaclass=ABCMeta):
         :param b:
         :return:
         """
-        raise NotImplementedError
+        raise NotImplementedError(f"{self.__class__.__name__} does not implement multiplication")
 
     def elements_sub(self, a: StructureElement, b: Any) -> StructureElement:
         """
@@ -53,27 +53,7 @@ class AbstractStructure(metaclass=ABCMeta):
         """
         if isinstance(b, StructureElement):
             return self.elements_add(a, b.inverse)
-        raise NotImplementedError
-
-    def element_additive_inverse(self, a: StructureElement) -> StructureElement | None:
-        """
-        Every structure that supports additive inverting must override this method.
-        It returns inverse or None if it doesn't exist.
-
-        :param a:
-        :return:
-        """
-        return None
-
-    def element_multiplicative_inverse(self, s: StructureElement) -> StructureElement | None:
-        """
-        Every structure that supports multiplicative inverting must override this method.
-        It returns inverse or None if it doesn't exist.
-
-        :param s:
-        :return:
-        """
-        return None
+        raise NotImplementedError(f"{self.__class__.__name__} does not implement subtraction")
 
     def element_pow(self, power, modulo) -> StructureElement | None:
         """
@@ -83,7 +63,27 @@ class AbstractStructure(metaclass=ABCMeta):
         :param modulo:
         :return:
         """
-        return None
+        raise NotImplementedError(f"{self.__class__.__name__} does not implement power operation")
+
+    def element_additive_inverse(self, a: StructureElement) -> StructureElement | None:
+        """
+        Every structure that supports additive inverting must override this method.
+        It returns inverse or None if it doesn't exist.
+
+        :param a:
+        :return:
+        """
+        raise NotImplementedError(f"{self.__class__.__name__} does not implement additive inverse")
+
+    def element_multiplicative_inverse(self, s: StructureElement) -> StructureElement | None:
+        """
+        Every structure that supports multiplicative inverting must override this method.
+        It returns inverse or None if it doesn't exist.
+
+        :param s:
+        :return:
+        """
+        raise NotImplementedError(f"{self.__class__.__name__} does not implement multiplicative inverse")
 
     @abstractmethod
     def __call__(self, value: Any) -> StructureElement:
