@@ -105,7 +105,16 @@ class Zn(Group):
 
     @override
     def elements_add(self, a, b):
-        return self((a.value + b.value) % self.n)
+
+        # adding an element of certain structure
+        if isinstance(b, StructureElement):
+            if b.structure is self:  # cannot add elements from different structures
+                return self((a.value + b.value) % self.n)
+            raise AttributeError(f"cannot add elements from different groups: {a.structure} and {b.structure}")
+
+        # adding an integer
+        if isinstance(b, int):
+            return self((a.value + b) % self.n)
 
     @property
     def neutral(self):
