@@ -55,10 +55,11 @@ class AbstractStructure(metaclass=ABCMeta):
             return self.elements_add(a, b.inverse)
         raise NotImplementedError(f"{self.__class__.__name__} does not implement subtraction")
 
-    def element_pow(self, power, modulo) -> StructureElement | None:
+    def element_pow(self, base: StructureElement, power, modulo) -> StructureElement | None:
         """
         Every structure that supports powering must override this method.
 
+        :param base: the element of the structure to be powered
         :param power:
         :param modulo:
         :return:
@@ -96,7 +97,7 @@ class AbstractStructure(metaclass=ABCMeta):
         """
         raise NotImplementedError
 
-    def __iter__(self):
+    def __iter__(self) -> Iterable[StructureElement]:
         """Allows iterating over all elements"""
         for element in self.__elements__:
             yield self(value=element)
@@ -105,12 +106,13 @@ class AbstractStructure(metaclass=ABCMeta):
         elements = list(self.__elements__)
         if len(elements) > MAX_STR_ELEMENTS:
             elements = elements[:ceil(MAX_STR_ELEMENTS / 2)] + ["..."] + elements[-MAX_STR_ELEMENTS // 2:]
-        return f"<{type(self).__name__}: {elements}>"
+        return f"<{self.name}: {elements}>"
 
     @property
     def name(self) -> str:
         """Returns the display name of the structure"""
         return type(self).__name__
+
 
 class StructureElement:
     """
@@ -132,7 +134,7 @@ class StructureElement:
         return self.structure.elements_mul(self, other)
 
     def __pow__(self, power, modulo=None):
-        return self.structure.element_pow(power, modulo)
+        return self.structure.element_pow(self, power, modulo)
 
     def __str__(self):
         return f"<{self.structure.name}: {self.value}>"
@@ -156,12 +158,14 @@ class StructureElement:
         """Returns inverse of the element in multiplicative notation"""
         return self.structure.element_multiplicative_inverse(self)
 
+
 class GroupElement(StructureElement):
 
     @property
     def inverse(self) -> StructureElement:
         """Alias for additive inverse since on groups there's defined only addition"""
         return self.ainverse
+
 
 class Group(AbstractStructure, metaclass=ABCMeta):
     """
@@ -179,6 +183,7 @@ class Group(AbstractStructure, metaclass=ABCMeta):
         """A shortcut for neutral element"""
         return self.neutral
 
+
 class Zn(Group):
     """
     A cyclic group of integers modulo n with additive notation.
@@ -193,6 +198,10 @@ class Zn(Group):
     def __call__(self, value: int) -> GroupElement:
         assert isinstance(value, int), "num must be integer"
         return GroupElement(value=value % self.n, structure=self)
+
+    @override
+    def __iter__(self) -> Iterable[GroupElement]:
+        return super().__iter__()
 
     @override
     def elements_add(self, a, b):
@@ -227,15 +236,19 @@ class Zn(Group):
     @override
     @property
     def neutral(self):
-        return GroupElement(value=0, structure=self)
+        return self(0)
 
     @override
     @property
     def name(self) -> str:
         return f"Z_{self.n}"
 
-class FieldElement(StructureElement):
-    ...
+
+class FieldElement(GroupElement):
+
+    def inverse(self) -> FieldElement:
+        raise NotImplementedError("You must use either ainverse or minverse method when dealing with fields")
+
 
 class Field(AbstractStructure, metaclass=ABCMeta):
     """
@@ -253,3 +266,86 @@ class Field(AbstractStructure, metaclass=ABCMeta):
     def mneutral(self) -> FieldElement:
         """neutral element of multiplication"""
 
+
+class Fp(Zn, Field):
+    """
+    Field with addition and multiplication available of Z/pZ type where p is a prime number.
+    """
+
+    def __init__(self, p: int):
+        """
+        :param p: assumed to be a prime number, otherwise will lead to unpredictable behavior
+        """
+        assert isinstance(p, int) and p > 1, "p must be a positive integer"
+        super().__init__(p)
+
+    def __call__(self, value: int) -> FieldElement:
+        assert isinstance(value, int), "num must be integer"
+        return FieldElement(value=value % self.p, structure=self)
+
+    @override
+    def elements_mul(self, a: StructureElement, b: Any) -> FieldElement:
+
+        # multiplication with the element of certain structure
+        if isinstance(b, StructureElement):
+            if b.structure is self:
+                return self((a.value * b.value) % self.p)
+            raise AttributeError(f"cannot multiply elements from different groups: {a.structure} and {b.structure}")
+
+        # with integer
+        if isinstance(b, int):
+            return self((a.value * b) % self.p)
+
+    @override
+    def element_pow(self, base: FieldElement, power, modulo) -> FieldElement:
+
+        # extracting the power as integer into b variable
+        if isinstance(power, StructureElement):
+            if power.structure is not self:
+                raise AttributeError(f"cannot use element of another group as power: {power.structure}")
+            b = power.value
+        elif isinstance(power, int):
+            b = power
+        else:
+            raise NotImplementedError(f"Unknown type of power: {type(power)}")
+
+        assert b >= 0, "power must be non-negative integer"
+
+        # fast powering a^b modulo p
+        a = base.value
+        p = self.p
+        ans = self.mneutral.value
+        while b:
+            if b % 2:
+                ans = (ans * a) % p
+            a = a ** 2 % p
+            b //= 2
+
+        return self(ans)
+
+    @property
+    def aneutral(self) -> FieldElement:
+        return self(0)
+
+    @property
+    def mneutral(self) -> FieldElement:
+        return self(1)
+
+    @override
+    def __iter__(self) -> Iterable[FieldElement]:
+        return super().__iter__()
+
+    @property
+    def p(self) -> int:
+        """alias for self.n"""
+        return self.n
+
+    @override
+    @property
+    def name(self) -> str:
+        return f"F_{self.n}"
+
+    @override
+    @property
+    def neutral(self) -> FieldElement:
+        raise NotImplementedError("You must use either aneutral or mneutral method when dealing with fields")
