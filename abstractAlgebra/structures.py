@@ -49,6 +49,13 @@ class AbstractStructure(metaclass=ABCMeta):
         """
         raise NotImplementedError(f"{self.__class__.__name__} does not implement floor division")
 
+    def elements_mod(self, other: Any) -> StructureElement:
+        """
+        When some structure element got __mod_ call it should pass this call to this method with itself as the first argument.
+        Thus, we're guaranteed first argument to be an instance of a current class.
+        """
+        raise NotImplementedError(f"{self.__class__.__name__} does not implement modulation")
+
     def elements_sub(self, a: StructureElement, b: Any) -> StructureElement:
         """
         Subtraction by default works like an addition of inverse.
@@ -158,6 +165,9 @@ class StructureElement:
 
     def __floordiv__(self, other):
         return self.structure.elements_floordiv(self, other)
+
+    def __mod__(self, other):
+        return self.structure.elements_mod(self, other)
 
     def __pow__(self, power, modulo=None):
         return self.structure.element_pow(self, power, modulo)
@@ -470,6 +480,20 @@ class Fp(Zn, Field):
         # dividing by integer
         if isinstance(b, int):
             return self(a.value * self(b).minverse.value)
+
+        raise NotImplementedError(f"Division is undefined for types: {type(a)}, {type(b)}")
+
+    @override
+    def elements_mod(self, element: FieldElement, modulus: Any) -> FieldElement:
+
+        # modulus is a structure element
+        if isinstance(modulus, GroupElement):
+            return self(element.value % modulus.value)
+
+        if isinstance(modulus, int):
+            return self(element.value % modulus)
+
+        raise NotImplementedError(f"Modulo division is undefined for types: {type(a)}, {type(b)}")
 
     @override
     def element_multiplicative_inverse(self, element: FieldElement) -> FieldElement | None:
