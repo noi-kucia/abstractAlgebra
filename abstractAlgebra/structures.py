@@ -23,10 +23,6 @@ class AbstractStructure(metaclass=ABCMeta):
         Every group with addictive notation available must implement this method.
         When some structure element got __add__ call it should pass this call to this method with itself as the first argument.
         Thus, we're guaranteed first argument to be an instance of a current class.
-
-        :param a:
-        :param b:
-        :return:
         """
         raise NotImplementedError(f"{self.__class__.__name__} does not implement addition")
 
@@ -35,10 +31,6 @@ class AbstractStructure(metaclass=ABCMeta):
         Every structure with multiplicative notation available must implement this method.
         When some structure element got __mul__ call it should pass this call to this method with itself as the first argument.
         Thus, we're guaranteed first argument to be an instance of a current class.
-
-        :param a:
-        :param b:
-        :return:
         """
         raise NotImplementedError(f"{self.__class__.__name__} does not implement multiplication")
 
@@ -47,10 +39,6 @@ class AbstractStructure(metaclass=ABCMeta):
         Every structure with multiplicative notation available must implement this method.
         When some structure element got __truediv__ call it should pass this call to this method with itself as the first argument.
         Thus, we're guaranteed first argument to be an instance of a current class.
-
-        :param a:
-        :param b:
-        :return:
         """
         raise NotImplementedError(f"{self.__class__.__name__} does not implement division")
 
@@ -58,10 +46,6 @@ class AbstractStructure(metaclass=ABCMeta):
         """
         When some structure element got __floordiv_ call it should pass this call to this method with itself as the first argument.
         Thus, we're guaranteed first argument to be an instance of a current class.
-
-        :param a:
-        :param b:
-        :return:
         """
         raise NotImplementedError(f"{self.__class__.__name__} does not implement floor division")
 
@@ -69,10 +53,6 @@ class AbstractStructure(metaclass=ABCMeta):
         """
         Subtraction by default works like an addition of inverse.
         Should be overridden by subclasses because of possible poor performance.
-
-        :param a:
-        :param b:
-        :return:
         """
         if isinstance(b, StructureElement):
             return self.elements_add(a, b.inverse)
@@ -81,11 +61,6 @@ class AbstractStructure(metaclass=ABCMeta):
     def element_pow(self, base: StructureElement, power, modulo) -> StructureElement | None:
         """
         Every structure that supports powering must override this method.
-
-        :param base: the element of the structure to be powered
-        :param power:
-        :param modulo:
-        :return:
         """
         raise NotImplementedError(f"{self.__class__.__name__} does not implement power operation")
 
@@ -93,9 +68,6 @@ class AbstractStructure(metaclass=ABCMeta):
         """
         Every structure that supports additive inverting must override this method.
         It returns inverse or None if it doesn't exist.
-
-        :param element:
-        :return:
         """
         raise NotImplementedError(f"{self.__class__.__name__} does not implement additive inverse")
 
@@ -103,9 +75,6 @@ class AbstractStructure(metaclass=ABCMeta):
         """
         Every structure that supports multiplicative inverting must override this method.
         It returns inverse or None if it doesn't exist.
-
-        :param element:
-        :return:
         """
         raise NotImplementedError(f"{self.__class__.__name__} does not implement multiplicative inverse")
 
