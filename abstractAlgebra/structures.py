@@ -109,6 +109,31 @@ class AbstractStructure(metaclass=ABCMeta):
         """
         raise NotImplementedError(f"{self.__class__.__name__} does not implement multiplicative inverse")
 
+    def elements_eq(self, element: StructureElement, other: Any) -> bool:
+        if isinstance(other, StructureElement) and other.structure is element.structure:
+            return element.value == other.value
+        return element.value == other
+
+    def elements_ge(self, element: StructureElement, other: Any) -> bool:
+        if isinstance(other, StructureElement) and other.structure is element.structure:
+            return element.value >= other.value
+        return element.value >= other
+
+    def elements_gt(self, element: StructureElement, other: Any) -> bool:
+        if isinstance(other, StructureElement) and other.structure is element.structure:
+            return element.value > other.value
+        return element.value > other
+
+    def elements_le(self, element: StructureElement, other: Any) -> bool:
+        if isinstance(other, StructureElement) and other.structure is element.structure:
+            return element.value <= other.value
+        return element.value <= other
+
+    def elements_lt(self, element: StructureElement, other: Any) -> bool:
+        if isinstance(other, StructureElement) and other.structure is element.structure:
+            return element.value < other.value
+        return element.value < other
+
     @abstractmethod
     def __call__(self, value: Any) -> StructureElement:
         """
@@ -169,29 +194,19 @@ class StructureElement:
         return self.ainverse
 
     def __eq__(self, other):
-        if isinstance(other, StructureElement) and other.structure is self.structure:
-            return self.value == other.value
-        return self.value == other
+        return self.structure.elements_eq(self, other)
 
     def __ge__(self, other):
-        if isinstance(other, StructureElement) and other.structure is self.structure:
-            return self.value >= other.value
-        return self.value >= other
+        return self.structure.elements_ge(self, other)
 
     def __gt__(self, other):
-        if isinstance(other, StructureElement) and other.structure is self.structure:
-            return self.value > other.value
-        return self.value > other
+        return self.structure.elements_gt(self, other)
 
     def __le__(self, other):
-        if isinstance(other, StructureElement) and other.structure is self.structure:
-            return self.value <= other.value
-        return self.value <= other
+        return self.structure.elements_le(self, other)
 
     def __lt__(self, other):
-        if isinstance(other, StructureElement) and other.structure is self.structure:
-            return self.value < other.value
-        return self.value < other
+        return self.structure.elements_lt(self, other)
 
     def __str__(self):
         return f"<{self.structure.name}: {self.value}>"
@@ -239,6 +254,7 @@ class Group(AbstractStructure, metaclass=ABCMeta):
     def e(self) -> StructureElement:
         """A shortcut for neutral element"""
         return self.neutral
+
 
 
 class Zn(Group):
