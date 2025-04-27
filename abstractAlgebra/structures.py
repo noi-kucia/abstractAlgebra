@@ -283,6 +283,46 @@ class Zn(Group):
         return super().__iter__()
 
     @override
+    def elements_eq(self, element: GroupElement, other: Any) -> bool:
+        if isinstance(other, StructureElement) and other.structure is element.structure:
+            return element.value == other.value
+        if isinstance(other, int):
+            return element.value == other % self.n
+        return element.value == other
+
+    @override
+    def elements_ge(self, element: GroupElement, other: Any) -> bool:
+        if isinstance(other, StructureElement) and other.structure is element.structure:
+            return element.value >= other.value
+        if isinstance(other, int):
+            return element.value >= other % self.n
+        return element.value >= other
+
+    @override
+    def elements_gt(self, element: GroupElement, other: Any) -> bool:
+        if isinstance(other, StructureElement) and other.structure is element.structure:
+            return element.value > other.value
+        if isinstance(other, int):
+            return element.value > other % self.n
+        return element.value > other
+
+    @override
+    def elements_le(self, element: GroupElement, other: Any) -> bool:
+        if isinstance(other, StructureElement) and other.structure is element.structure:
+            return element.value <= other.value
+        if isinstance(other, int):
+            return element.value <= other % self.n
+        return element.value <= other
+
+    @override
+    def elements_lt(self, element: GroupElement, other: Any) -> bool:
+        if isinstance(other, StructureElement) and other.structure is element.structure:
+            return element.value < other.value
+        if isinstance(other, int):
+            return element.value < other % self.n
+        return element.value < other
+
+    @override
     def elements_add(self, a, b):
 
         # adding an element of certain structure
