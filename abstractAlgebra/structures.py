@@ -320,6 +320,8 @@ class Zn(Group):
         if isinstance(b, int):
             return self((a.value + b) % self.n)
 
+        raise NotImplementedError(f"Addition is undefined for types: {type(a)}, {type(b)}")
+
     @override
     def elements_sub(self, a: GroupElement, b: Any) -> GroupElement:
 
@@ -332,6 +334,8 @@ class Zn(Group):
         # subtracting an integer
         if isinstance(b, int):
             return self((a.value - b) % self.n)
+
+        raise NotImplementedError(f"Subtraction is undefined for types: {type(a)}, {type(b)}")
 
     @override
     def element_additive_inverse(self, element: GroupElement) -> GroupElement:
