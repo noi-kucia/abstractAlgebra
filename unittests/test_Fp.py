@@ -1,7 +1,7 @@
 import random
 import unittest
 from abstractAlgebra.structures import Fp
-from hypothesis import given, assume, strategies as st
+from hypothesis import given, assume, example, strategies as st
 
 small_primes = [
     2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47,
@@ -77,6 +77,18 @@ class FpTest(unittest.TestCase):
         else:
             self.assertIsNotNone(el.minverse, f"Expected inverse for {el}, got None")
             self.assertEqual(el * el.minverse, field.mneutral, f"{el.minverse} is not an inverse of {el}")
+
+    @given(
+        a=st.integers(min_value=0, max_value=32),
+        b=st.integers(min_value=0, max_value=64),
+        p=prime_numbers
+    )
+    def test_power(self, a, b, p):
+        """
+        Test that a**b if Fp(p) equals to a**b mod p
+        """
+        field = Fp(p)
+        self.assertEqual(field(a)**field(b), pow(a % p, b % p) % p, f"Wrong power for {a}**{b} (mod {p})")
 
 
 if __name__ == '__main__':
