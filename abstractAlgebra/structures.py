@@ -89,22 +89,22 @@ class AbstractStructure(metaclass=ABCMeta):
         """
         raise NotImplementedError(f"{self.__class__.__name__} does not implement power operation")
 
-    def element_additive_inverse(self, a: StructureElement) -> StructureElement | None:
+    def element_additive_inverse(self, element: StructureElement) -> StructureElement | None:
         """
         Every structure that supports additive inverting must override this method.
         It returns inverse or None if it doesn't exist.
 
-        :param a:
+        :param element:
         :return:
         """
         raise NotImplementedError(f"{self.__class__.__name__} does not implement additive inverse")
 
-    def element_multiplicative_inverse(self, s: StructureElement) -> StructureElement | None:
+    def element_multiplicative_inverse(self, element: StructureElement) -> StructureElement | None:
         """
         Every structure that supports multiplicative inverting must override this method.
         It returns inverse or None if it doesn't exist.
 
-        :param s:
+        :param element:
         :return:
         """
         raise NotImplementedError(f"{self.__class__.__name__} does not implement multiplicative inverse")
