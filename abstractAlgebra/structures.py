@@ -136,6 +136,9 @@ class StructureElement:
     def __pow__(self, power, modulo=None):
         return self.structure.element_pow(self, power, modulo)
 
+    def __neg__(self):
+        return self.ainverse
+
     def __str__(self):
         return f"<{self.structure.name}: {self.value}>"
 
