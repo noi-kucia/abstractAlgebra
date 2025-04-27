@@ -239,6 +239,13 @@ class StructureElement:
 
 class GroupElement(StructureElement):
 
+    def __radd__(self, other):
+        return self + other
+
+    def __rsub__(self, other):
+        """other - self = -self + other"""
+        return self.ainverse + other
+
     @property
     def inverse(self) -> StructureElement:
         """Alias for additive inverse since on groups there's defined only addition"""
