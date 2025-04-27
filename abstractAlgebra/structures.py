@@ -246,8 +246,10 @@ class Zn(Group):
 
 class FieldElement(GroupElement):
 
+    @property
     def inverse(self) -> FieldElement:
-        raise NotImplementedError("You must use either ainverse or minverse method when dealing with fields")
+        """Alias for multiplicative inverse since"""
+        return self.minverse
 
 
 class Field(AbstractStructure, metaclass=ABCMeta):
