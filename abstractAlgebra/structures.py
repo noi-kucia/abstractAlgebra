@@ -34,7 +34,7 @@ class AbstractStructure(metaclass=ABCMeta):
         """
         raise NotImplementedError(f"{self.__class__.__name__} does not implement multiplication")
 
-    def elements_div(self, a: StructureElement, b: Any) -> StructureElement:
+    def elements_div(self, element: StructureElement, b: Any) -> StructureElement:
         """
         Every structure with multiplicative notation available must implement this method.
         When some structure element got __truediv__ call it should pass this call to this method with itself as the first argument.
@@ -42,21 +42,21 @@ class AbstractStructure(metaclass=ABCMeta):
         """
         raise NotImplementedError(f"{self.__class__.__name__} does not implement division")
 
-    def elements_floordiv(self, other: Any) -> StructureElement:
+    def elements_floordiv(self, element: StructureElement, other: Any) -> StructureElement:
         """
         When some structure element got __floordiv_ call it should pass this call to this method with itself as the first argument.
         Thus, we're guaranteed first argument to be an instance of a current class.
         """
         raise NotImplementedError(f"{self.__class__.__name__} does not implement floor division")
 
-    def elements_mod(self, other: Any) -> StructureElement:
+    def elements_mod(self, element: StructureElement, other: Any) -> StructureElement:
         """
         When some structure element got __mod_ call it should pass this call to this method with itself as the first argument.
         Thus, we're guaranteed first argument to be an instance of a current class.
         """
         raise NotImplementedError(f"{self.__class__.__name__} does not implement modulation")
 
-    def elements_sub(self, a: StructureElement, b: Any) -> StructureElement:
+    def elements_sub(self, element: StructureElement, b: Any) -> StructureElement:
         """
         Subtraction by default works like an addition of inverse.
         Should be overridden by subclasses because of possible poor performance.
@@ -65,7 +65,7 @@ class AbstractStructure(metaclass=ABCMeta):
             return self.elements_add(a, b.inverse)
         raise NotImplementedError(f"{self.__class__.__name__} does not implement subtraction")
 
-    def element_pow(self, base: StructureElement, power, modulo) -> StructureElement | None:
+    def element_pow(self, element: StructureElement, power, modulo) -> StructureElement | None:
         """
         Every structure that supports powering must override this method.
         """
