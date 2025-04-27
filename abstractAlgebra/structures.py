@@ -42,6 +42,29 @@ class AbstractStructure(metaclass=ABCMeta):
         """
         raise NotImplementedError(f"{self.__class__.__name__} does not implement multiplication")
 
+    def elements_div(self, a: StructureElement, b: Any) -> StructureElement:
+        """
+        Every structure with multiplicative notation available must implement this method.
+        When some structure element got __truediv__ call it should pass this call to this method with itself as the first argument.
+        Thus, we're guaranteed first argument to be an instance of a current class.
+
+        :param a:
+        :param b:
+        :return:
+        """
+        raise NotImplementedError(f"{self.__class__.__name__} does not implement division")
+
+    def elements_floordiv(self, other: Any) -> StructureElement:
+        """
+        When some structure element got __floordiv_ call it should pass this call to this method with itself as the first argument.
+        Thus, we're guaranteed first argument to be an instance of a current class.
+
+        :param a:
+        :param b:
+        :return:
+        """
+        raise NotImplementedError(f"{self.__class__.__name__} does not implement floor division")
+
     def elements_sub(self, a: StructureElement, b: Any) -> StructureElement:
         """
         Subtraction by default works like an addition of inverse.
@@ -132,6 +155,12 @@ class StructureElement:
 
     def __mul__(self, other):
         return self.structure.elements_mul(self, other)
+
+    def __truediv__(self, other):
+        return self.structure.elements_div(self, other)
+
+    def __floordiv__(self, other):
+        return self.structure.elements_floordiv(self, other)
 
     def __pow__(self, power, modulo=None):
         return self.structure.element_pow(self, power, modulo)
