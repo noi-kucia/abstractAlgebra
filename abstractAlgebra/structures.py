@@ -190,6 +190,9 @@ class StructureElement:
     def __lt__(self, other):
         return self.structure.elements_lt(self, other)
 
+    def __bool__(self):
+        return bool(self.value)
+
     def __str__(self):
         return f"<{self.structure.name}: {self.value}>"
 
@@ -400,37 +403,65 @@ class Fp(Zn, Field):
         """
         assert isinstance(p, int) and p > 1, "p must be a positive integer"
         super().__init__(p)
+        self.__nonresidue__ = None
 
     def __call__(self, value: int) -> FieldElement:
         assert isinstance(value, int), "num must be integer"
         return FieldElement(value=value % self.p, structure=self)
 
     def is_quadratic_residue(self, element: FieldElement) -> bool:
-        # Euler’s criterion + Fermat’s Little Theorem
-        return element ** ((self.p-1)//2) == 1
+        # Euler’s criterion
+        return not element.value or element ** ((self.p-1)//2) == 1
+
+    def get_nonresidue(self):
+        """
+        :return: first found quadratic non-residue or None if it doesn't exist (in Z/2Z only)
+        """
+        if self.__nonresidue__ is None:
+            for candidate in self:
+                if not self.is_quadratic_residue(candidate):
+                    self.__nonresidue__ = candidate
+                    break
+        return self.__nonresidue__
 
     def sqrt(self, element: FieldElement) -> FieldElement | None:
+        # Tonelli–Shanks algorithm - https://en.wikipedia.org/wiki/Tonelli–Shanks_algorithm
+
+        # trivial for Z/2Z (Tonelli-shanks cannot be applied here)
+        if self.p == 2:
+            return element
+
         if not self.is_quadratic_residue(element):
             return None
 
-        # Pocklington's algorithm - https://en.wikipedia.org/wiki/Pocklington%27s_algorithm
-        if self.p % 4 == 3:
-            m = self.p // 4
-            return element ** (m + 1)
-        elif self.p % 8 == 5:
-            m = self.p // 8
-            if element ** (2*m + 1) == 1:
-                return element ** (m + 1)
-            y = (4 * element) ** (m + 1)
-            if y % 2:
-                return (self.p + y) // 2
-            else:
-                return y // 2
-        elif self.p % 8 == 1:
-            # m = p // 8
-            # D = -num // m
-            # not the case
-            raise NotImplementedError
+        # By factoring out powers of 2, find q and s such that p-1 = q*2^s with q odd
+        p = self.p
+        t = self(p - 1)
+        s = self(0)
+        while not t % 2:
+            s += 1
+            t.value //= 2
+        q = self((p - 1) // (2 << s.value))
+
+        z = self.get_nonresidue()
+        m = s
+        c = z ** q
+        t = element ** q
+        r = element ** ((q + 1) / 2)
+
+        while True:
+            if t == 0:
+                return self(0)
+            if t == 1:
+                return r
+            i = self(1)
+            while t ** (2 << i.value) != 1:
+                i += 1
+            b = c ** (2 ** (m - i -1))
+            m = i
+            c = b ** 2
+            t *= b ** 2
+            r *= b
 
     @override
     def elements_mul(self, a: StructureElement, b: Any) -> FieldElement:
