@@ -139,6 +139,31 @@ class StructureElement:
     def __neg__(self):
         return self.ainverse
 
+    def __eq__(self, other):
+        if isinstance(other, StructureElement):
+            return self.value == other.value
+        return self.value == other
+
+    def __ge__(self, other):
+        if isinstance(other, StructureElement):
+            return self.value >= other.value
+        return self.value >= other
+
+    def __gt__(self, other):
+        if isinstance(other, StructureElement):
+            return self.value > other.value
+        return self.value > other
+
+    def __le__(self, other):
+        if isinstance(other, StructureElement):
+            return self.value <= other.value
+        return self.value <= other
+
+    def __lt__(self, other):
+        if isinstance(other, StructureElement):
+            return self.value < other.value
+        return self.value < other
+
     def __str__(self):
         return f"<{self.structure.name}: {self.value}>"
 
