@@ -361,6 +361,9 @@ class FieldElement(GroupElement):
     def __rmul__(self, other):
         return self * other
 
+    def __rpow__(self, other):
+        return self.structure(other) ** self
+
     @property
     def sqrt(self):
         return self.structure.sqrt(self)
@@ -426,6 +429,7 @@ class Fp(Zn, Field):
 
     def sqrt(self, element: FieldElement) -> FieldElement | None:
         # Tonelli–Shanks algorithm - https://en.wikipedia.org/wiki/Tonelli–Shanks_algorithm
+        MAX_ITTERATIONS = 512
 
         # trivial for Z/2Z (Tonelli-shanks cannot be applied here)
         if self.p == 2:
@@ -441,7 +445,7 @@ class Fp(Zn, Field):
         while not t % 2:
             s += 1
             t.value //= 2
-        q = self((p - 1) // (2 << s.value))
+        q = t
 
         z = self.get_nonresidue()
         m = s
@@ -449,19 +453,21 @@ class Fp(Zn, Field):
         t = element ** q
         r = element ** ((q + 1) / 2)
 
-        while True:
+        for _ in range(MAX_ITTERATIONS):
             if t == 0:
                 return self(0)
             if t == 1:
                 return r
             i = self(1)
-            while t ** (2 << i.value) != 1:
+            while t ** (2 ** i.value) != 1:
                 i += 1
-            b = c ** (2 ** (m - i -1))
+            b = c ** (2 ** (m - i - 1))
             m = i
             c = b ** 2
             t *= b ** 2
             r *= b
+        else:
+            raise RuntimeError(f"Exceeded maximum number of iterations when finding sqrt of  {element}")
 
     @override
     def elements_mul(self, a: StructureElement, b: Any) -> FieldElement:
