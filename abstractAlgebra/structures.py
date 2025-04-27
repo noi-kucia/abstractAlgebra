@@ -364,6 +364,11 @@ class Zn(Group):
 
 
 class FieldElement(GroupElement):
+    __structure__: Field
+
+    @property
+    def sqrt(self):
+        return self.structure.sqrt(self)
 
     @property
     def inverse(self) -> FieldElement:
@@ -376,6 +381,10 @@ class Field(AbstractStructure, metaclass=ABCMeta):
     Algebraic field - https://en.wikipedia.org/wiki/Field_(mathematics)
     Supports additive and multiplicative notations.
     """
+
+    @abstractmethod
+    def sqrt(self, element: FieldElement) -> FieldElement | None:
+        """Returns sqrt of the given field element or None if it doesn't exist"""
 
     @property
     @abstractmethod
@@ -406,8 +415,30 @@ class Fp(Zn, Field):
 
     def is_quadratic_residue(self, element: FieldElement) -> bool:
         # Euler’s criterion + Fermat’s Little Theorem
-        num = element.value
-        return num ** (self.p-1)//2 == 1
+        return element ** ((self.p-1)//2) == 1
+
+    def sqrt(self, element: FieldElement) -> FieldElement | None:
+        if not self.is_quadratic_residue(element):
+            return None
+
+        # Pocklington's algorithm - https://en.wikipedia.org/wiki/Pocklington%27s_algorithm
+        if self.p % 4 == 3:
+            m = self.p // 4
+            return element ** (m + 1)
+        elif self.p % 8 == 5:
+            m = self.p // 8
+            if element ** (2*m + 1) == 1:
+                return element ** (m + 1)
+            y = (4 * element) ** (m + 1)
+            if y % 2:
+                return (self.p + y) // 2
+            else:
+                return y // 2
+        elif self.p % 8 == 1:
+            # m = p // 8
+            # D = -num // m
+            # not the case
+            raise NotImplementedError
 
     @override
     def elements_mul(self, a: StructureElement, b: Any) -> FieldElement:
