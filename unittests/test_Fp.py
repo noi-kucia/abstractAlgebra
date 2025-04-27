@@ -90,6 +90,23 @@ class FpTest(unittest.TestCase):
         field = Fp(p)
         self.assertEqual(field(a)**field(b), pow(a % p, b % p) % p, f"Wrong power for {a}**{b} (mod {p})")
 
+    @example(
+        a=2, p=241
+    )
+    @given(
+        a=st.integers(min_value=0, max_value=1000),
+        p=prime_numbers
+    )
+    def test_sqrt(self, a, p):
+        """
+        Test that Fp(a).sqrt ** 2 == a
+        """
+        assume(2 < p)
+        field = Fp(p)
+        num = field(a)
+        assume(field.is_quadratic_residue(num))
+        self.assertEqual(num.sqrt ** 2, a % p, f"Wrong sqrt for {a} (mod {p}")
+
 
 if __name__ == '__main__':
     unittest.main()
