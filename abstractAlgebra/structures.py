@@ -269,7 +269,6 @@ class Group(AbstractStructure, metaclass=ABCMeta):
         return self.neutral
 
 
-
 class Zn(Group):
     """
     A cyclic group of integers modulo n with additive notation.
@@ -372,6 +371,9 @@ class Zn(Group):
 
 class FieldElement(GroupElement):
     __structure__: Field
+
+    def __rmul__(self, other):
+        return self * other
 
     @property
     def sqrt(self):
