@@ -404,6 +404,11 @@ class Fp(Zn, Field):
         assert isinstance(value, int), "num must be integer"
         return FieldElement(value=value % self.p, structure=self)
 
+    def is_quadratic_residue(self, element: FieldElement) -> bool:
+        # Euler’s criterion + Fermat’s Little Theorem
+        num = element.value
+        return num ** (self.p-1)//2 == 1
+
     @override
     def elements_mul(self, a: StructureElement, b: Any) -> FieldElement:
 
