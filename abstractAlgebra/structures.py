@@ -473,19 +473,19 @@ class Fp(Zn, Field):
         return self(ans)
 
     @override
-    def elements_div(self, a: FieldElement, b: Any) -> FieldElement:
+    def elements_div(self, element: FieldElement, b: Any) -> FieldElement:
 
         # dividing by a structure element
         if isinstance(b, StructureElement):
             if b.structure is self:
-                return self(a.value * b.minverse.value)
-            raise AttributeError(f"cannot divide element of {a.structure} by element of {b.structure}")
+                return self(element.value * b.minverse.value)
+            raise AttributeError(f"cannot divide element of {element.structure} by element of {b.structure}")
 
         # dividing by integer
         if isinstance(b, int):
-            return self(a.value * self(b).minverse.value)
+            return self(element.value * self(b).minverse.value)
 
-        raise NotImplementedError(f"Division is undefined for types: {type(a)}, {type(b)}")
+        raise NotImplementedError(f"Division is undefined for types: {type(element)}, {type(b)}")
 
     @override
     def elements_mod(self, element: FieldElement, modulus: Any) -> FieldElement:
