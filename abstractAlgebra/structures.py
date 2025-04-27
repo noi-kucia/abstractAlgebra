@@ -156,6 +156,9 @@ class AbstractStructure(metaclass=ABCMeta):
             elements = elements[:ceil(MAX_STR_ELEMENTS / 2)] + ["..."] + elements[-MAX_STR_ELEMENTS // 2:]
         return f"<{self.name}: {elements}>"
 
+    def __repr__(self):
+        return self.__str__()
+
     @property
     def name(self) -> str:
         """Returns the display name of the structure"""
@@ -210,6 +213,9 @@ class StructureElement:
 
     def __str__(self):
         return f"<{self.structure.name}: {self.value}>"
+
+    def __repr__(self):
+        return self.__str__()
 
     @property
     def structure(self):
