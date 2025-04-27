@@ -169,27 +169,27 @@ class StructureElement:
         return self.ainverse
 
     def __eq__(self, other):
-        if isinstance(other, StructureElement):
+        if isinstance(other, StructureElement) and other.structure is self.structure:
             return self.value == other.value
         return self.value == other
 
     def __ge__(self, other):
-        if isinstance(other, StructureElement):
+        if isinstance(other, StructureElement) and other.structure is self.structure:
             return self.value >= other.value
         return self.value >= other
 
     def __gt__(self, other):
-        if isinstance(other, StructureElement):
+        if isinstance(other, StructureElement) and other.structure is self.structure:
             return self.value > other.value
         return self.value > other
 
     def __le__(self, other):
-        if isinstance(other, StructureElement):
+        if isinstance(other, StructureElement) and other.structure is self.structure:
             return self.value <= other.value
         return self.value <= other
 
     def __lt__(self, other):
-        if isinstance(other, StructureElement):
+        if isinstance(other, StructureElement) and other.structure is self.structure:
             return self.value < other.value
         return self.value < other
 
