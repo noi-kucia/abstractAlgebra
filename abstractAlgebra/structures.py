@@ -382,6 +382,36 @@ class Fp(Zn, Field):
 
         return self(ans)
 
+    @override
+    def elements_div(self, a: FieldElement, b: Any) -> FieldElement:
+
+        # dividing by a structure element
+        if isinstance(b, StructureElement):
+            if b.structure is self:
+                return self(a.value * b.minverse.value)
+            raise AttributeError(f"cannot divide element of {a.structure} by element of {b.structure}")
+
+        # dividing by integer
+        if isinstance(b, int):
+            return self(a.value * self(b).minverse.value)
+
+    @override
+    def element_multiplicative_inverse(self, element: FieldElement) -> FieldElement | None:
+        assert element >= 0, "element must be a positive integer"
+
+        # zero doesn't have inverse
+        if element == self.aneutral:
+            return None
+
+        a, b = element.value, self.p
+        inv, inv_prev = 0, 1
+        while b != 0:
+            q = a // b
+            a, b = b, a - q * b
+            inv, inv_prev = inv_prev - q * inv, inv
+
+        return self(inv_prev)
+
     @property
     def aneutral(self) -> FieldElement:
         return self(0)
