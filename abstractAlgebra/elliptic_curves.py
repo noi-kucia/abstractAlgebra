@@ -95,9 +95,6 @@ class EllipticCurve(Field):
             raise AttributeError(f"Expected 3 ints or 2 FieldElements, got: {a, b, p}")
 
         assert define_appropriate_curve(a, b), "4a^3 + 27b^2 must not be zero"
-        self.field: Fp = Fp(p)
-        self.a: FieldElement = self.field(a)
-        self.b: FieldElement = self.field(b)
 
     def __call__(self, *args, **kwargs) -> EllipticCurvePoint:
         """
