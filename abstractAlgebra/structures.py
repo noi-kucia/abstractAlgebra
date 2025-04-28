@@ -139,7 +139,7 @@ class AbstractStructure(metaclass=ABCMeta):
     @property
     def name(self) -> str:
         """Returns the display name of the structure"""
-        return type(self).__name__
+        return type(self).__class__.__name__
 
 
 class StructureElement:
