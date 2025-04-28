@@ -75,7 +75,24 @@ class EllipticCurve(Field):
     Elliptic curve over finite field Fp
     """
 
-    def __init__(self, a: int, b: int, p: int):
+    def __init__(self, a: int | FieldElement, b: int | FieldElement, p: int = None):
+        """
+        Can be initialized either with 3 integers: a,b and p
+        or with 2 Field elements of the same field.
+        In the second case, the elements' field will be used.
+        """
+
+        if all((isinstance(arg, int) for arg in (a, b, p))):
+            self.field: Fp = Fp(p)
+            self.a: FieldElement = self.field(a)
+            self.b: FieldElement = self.field(b)
+        elif isinstance(a, FieldElement) and isinstance(b, FieldElement) and a.field is b.field:
+            self.field = a.field
+            self.a: FieldElement = a
+            self.b: FieldElement = b
+        else:
+            raise AttributeError(f"Expected 3 ints or 2 FieldElements, got: {a, b, p}")
+
         assert define_appropriate_curve(a, b), "4a^3 + 27b^2 must not be zero"
         self.field: Fp = Fp(p)
         self.a: FieldElement = self.field(a)
@@ -93,7 +110,7 @@ class EllipticCurve(Field):
             assert isinstance(y, int) or y == INFTY, f"y expected to be an integer or INFTY, got {type(y)} instead"
 
     def __str__(self):
-        return f"<{self.__class__.__name__}: x^3 + {self.a}x + {self.b} (mod {self.p})>"
+        return f"<{self.__class__.__name__}: x^3 + {self.a.value}x + {self.b.value} (mod {self.p})>"
 
     @override
     def sqrt(self, element: EllipticCurvePoint) -> EllipticCurvePoint | None:
