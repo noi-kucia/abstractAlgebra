@@ -41,14 +41,30 @@ class EllipticCurvePoint(FieldElement):
     """
 
     def __init__(self,
-                 x: int | INFTY,
-                 y: int | INFTY,
+                 x: int = None,
+                 y: int = None,
                  *,
-                 value: Iterable[int | INFTY] = None,
-                 structure: AbstractStructure = None):
-        value = value or (x, y)
+                 value: Iterable[FieldElement | INFTY] = None,
+                 structure: EllipticCurve):
+
+        curve = structure
+        field = curve.field
+        if x is None or y is None:
+            assert len(list(value)) == 2, "value must contain exactly 2 elements"
+            x, y = value
+        if isinstance(x, int):
+            x = field(x)
+        if isinstance(y, int):
+            y = field(y)
+
+        assert isinstance(x, FieldElement), "x expected to be a FieldElement instance"
+        assert isinstance(y, FieldElement), "y expected to be a FieldElement instance"
+        assert y.field == x.field, "both x and y must be from the same field"
+
+        value = (x, y)
+        structure = structure or x.field
         super().__init__(value=value, structure=structure)
-        self.value: Tuple[int | INFTY, int | INFTY]
+        self.value: Tuple[FieldElement | INFTY, FieldElement | INFTY]
 
     def __str__(self):
         return f"<{self.__class__.__name__}: {self.value}>"
@@ -59,7 +75,7 @@ class EllipticCurvePoint(FieldElement):
 
     @x.setter
     def x(self, value: int):
-        self.value[0] = value
+        self.value = (value, self.value[1])
 
     @property
     def y(self) -> int:
@@ -67,7 +83,11 @@ class EllipticCurvePoint(FieldElement):
 
     @y.setter
     def y(self, value: int):
-        self.value[1] = value
+        self.value = (self.value[0], value)
+
+    @property
+    def field(self) -> Fp:
+        return self.curve.field
 
     @property
     def curve(self) -> EllipticCurve:
@@ -124,10 +144,16 @@ class EllipticCurve(Field):
             x = self.field.get_random_element()
             y_squared = self.polynom(x)
             if y_squared.is_quadratic_residue():
-                return EllipticCurvePoint(x, y_squared.sqrt)
+                return EllipticCurvePoint(x, y_squared.sqrt, structure=self)
         else:
             raise RuntimeError(f"Cannot generate random point of the {self}. If you sure it exists,"
                                " try increasing the MAX_RANDOM_CURVE_ITERS parameter.")
+
+    @override
+    def element_additive_inverse(self, element: EllipticCurvePoint) -> EllipticCurvePoint:
+        element.y = element.y.ainverse
+        return element
+
 
     @override
     def sqrt(self, element: EllipticCurvePoint) -> EllipticCurvePoint | None:
