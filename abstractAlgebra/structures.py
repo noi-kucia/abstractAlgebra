@@ -267,6 +267,12 @@ class Zn(Group):
         return GroupElement(value=value % self.n, structure=self)
 
     @override
+    def __str__(self):
+        if self.n > MAX_STR_ELEMENTS:
+            elements = list(range(ceil(MAX_STR_ELEMENTS / 2))) + ["..."] + list(range(self.n-MAX_STR_ELEMENTS // 2, self.n))
+        return f"<{self.name}: {elements}>"
+
+    @override
     def __iter__(self) -> Iterable[GroupElement]:
         return super().__iter__()
 
