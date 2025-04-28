@@ -65,6 +65,11 @@ class EllipticCurvePoint(FieldElement):
     def y(self, value: int):
         self.value[1] = value
 
+    @property
+    def curve(self) -> EllipticCurve:
+        """Alias for self.structure"""
+        return self.structure
+
 class EllipticCurve(Field):
     """
     Elliptic curve over finite field Fp
