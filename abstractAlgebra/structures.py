@@ -365,6 +365,9 @@ class Zn(Group):
 class FieldElement(GroupElement):
     __structure__: Field
 
+    def is_quadratic_residue(self) -> bool:
+        return self.field.is_quadratic_residue(self)
+
     def __rmul__(self, other):
         return self * other
 
@@ -391,6 +394,9 @@ class Field(AbstractStructure, metaclass=ABCMeta):
     Algebraic field - https://en.wikipedia.org/wiki/Field_(mathematics)
     Supports additive and multiplicative notations.
     """
+
+    def is_quadratic_residue(self, element: FieldElement) -> bool:
+        raise NotImplementedError
 
     @abstractmethod
     def sqrt(self, element: FieldElement) -> FieldElement | None:
@@ -428,6 +434,7 @@ class Fp(Zn, Field):
         """Returns random element of this field"""
         return self(random.randint(0, self.p-1))
 
+    @override
     def is_quadratic_residue(self, element: FieldElement) -> bool:
         # Euler’s criterion
         return not element.value or element ** ((self.p-1)//2) == 1
