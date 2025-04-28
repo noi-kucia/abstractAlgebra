@@ -18,7 +18,7 @@ def define_appropriate_curve(a: int, b: int) -> bool:
 
 def random_elliptic_curve(p: int) -> EllipticCurve:
     """
-    Returns random elliptic curve over finite Fp field.
+    Returns a random elliptic curve over finite Fp field.
     :param p:
     :return:
     """
@@ -82,14 +82,33 @@ class EllipticCurve(Field):
         It can be either single iterable of 2 integers or 2 integers itself as 2 arguments.
         """
 
-        if len(args) == 2:
+        if len(args) == 1:
+            x, y = args[0]
+        elif len(args) == 2:
             x, y = args
-            assert isinstance(x, int) or x == INFTY, f"x expected to be an integer or INFTY, got {type(x)} instead"
-            assert isinstance(y, int) or y == INFTY, f"y expected to be an integer or INFTY, got {type(y)} instead"
+        else:
+            raise AttributeError(f"Expected 1 or 2 arguments, got {len(args)}")
+
+        assert isinstance(x, int) or x == INFTY, f"x expected to be an integer or INFTY, got {type(x)} instead"
+        assert isinstance(y, int) or y == INFTY, f"y expected to be an integer or INFTY, got {type(y)} instead"
+
+        # TODO: check whether point lies on the curve
+
+        return EllipticCurvePoint(x, y, structure=self)
 
     def __str__(self):
         return f"<{self.__class__.__name__}: x^3 + {self.a}x + {self.b} (mod {self.p})>"
 
+    def __contains__(self, item):
+        if isinstance(item, EllipticCurvePoint) and item.structure == self:
+            return True
+        if isinstance(item, Iterable):
+            if len(item) == 2:
+                x, y = tuple(item)
+                if isinstance(x, int) and isinstance(y, int):
+                    # TODO: finish
+                    ...
+        return False
     @override
     def sqrt(self, element: EllipticCurvePoint) -> EllipticCurvePoint | None:
         raise NotImplementedError
