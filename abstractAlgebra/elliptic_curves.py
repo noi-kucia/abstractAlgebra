@@ -119,6 +119,16 @@ class EllipticCurve(Field):
         assert isinstance(x, FieldElement) and x.field is self, "given x must an element of the cruve's field"
         return x ** 3 + self.a*x + self.b
 
+    def get_random_point(self) -> EllipticCurvePoint:
+        for _ in range(MAX_RANDOM_CURVE_ITERS):
+            x = self.field.get_random_element()
+            y_squared = self.polynom(x)
+            if y_squared.is_quadratic_residue():
+                return EllipticCurvePoint(x, y_squared.sqrt)
+        else:
+            raise RuntimeError(f"Cannot generate random point of the {self}. If you sure it exists,"
+                               " try increasing the MAX_RANDOM_CURVE_ITERS parameter.")
+
     @override
     def sqrt(self, element: EllipticCurvePoint) -> EllipticCurvePoint | None:
         raise NotImplementedError
