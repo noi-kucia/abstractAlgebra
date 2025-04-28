@@ -10,7 +10,7 @@ import random
 INFTY = Decimal('Infinity')
 MAX_RANDOM_CURVE_ITERS = 16
 
-def define_appropriate_curve(a: int, b: int) -> bool:
+def define_appropriate_curve(a: FieldElement, b: FieldElement) -> bool:
     """
     Returns true if x^3 + ax + b is non-singular (4a^3 + 27b^2 != 0)
     """
