@@ -380,6 +380,11 @@ class FieldElement(GroupElement):
         """Alias for multiplicative inverse since"""
         return self.minverse
 
+    @property
+    def field(self) -> Field:
+        """Alias for self.structure"""
+        return self.structure
+
 
 class Field(AbstractStructure, metaclass=ABCMeta):
     """
