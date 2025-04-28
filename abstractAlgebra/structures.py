@@ -4,6 +4,7 @@ Abstract algebra shit it 2 words
 """
 from __future__ import annotations
 
+import random
 from abc import ABCMeta, abstractmethod
 from typing import Iterable, override, Any
 from math import ceil, floor
@@ -417,6 +418,10 @@ class Fp(Zn, Field):
     def __call__(self, value: int) -> FieldElement:
         assert isinstance(value, int), "num must be integer"
         return FieldElement(value=value % self.p, structure=self)
+
+    def get_random_element(self) -> FieldElement:
+        """Returns random element of this field"""
+        return self(random.randint(0, self.p-1))
 
     def is_quadratic_residue(self, element: FieldElement) -> bool:
         # Euler’s criterion
