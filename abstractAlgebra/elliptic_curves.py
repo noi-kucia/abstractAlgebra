@@ -50,6 +50,9 @@ class EllipticCurvePoint(FieldElement):
         super().__init__(value=value, structure=structure)
         self.value: Tuple[int | INFTY, int | INFTY]
 
+    def __str__(self):
+        return f"<{self.__class__.__name__}: {self.value}>"
+
     @property
     def x(self) -> int:
         return self.value[0]
