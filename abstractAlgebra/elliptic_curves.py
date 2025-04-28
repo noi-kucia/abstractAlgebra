@@ -24,8 +24,8 @@ def random_elliptic_curve(p: int) -> EllipticCurve:
     """
     assert p > 1, "p must be greater than 1"
     for _ in range(MAX_RANDOM_CURVE_ITERS):
-        a = random.randint(0, p)
-        b = random.randint(0, p)
+        a = random.randint(0, p-1)
+        b = random.randint(0, p-1)
         if define_appropriate_curve(a, b):
             return EllipticCurve(a, b, p)
     else:
