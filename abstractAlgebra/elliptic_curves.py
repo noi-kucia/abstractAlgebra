@@ -5,7 +5,33 @@ from typing import Tuple
 from abstractAlgebra.structures import *
 from decimal import Decimal
 
+import random
+
 INFTY = Decimal('Infinity')
+MAX_RANDOM_CURVE_ITERS = 16
+
+def define_appropriate_curve(a: int, b: int) -> bool:
+    """
+    Returns true if x^3 + ax + b is non-singular (4a^3 + 27b^2 != 0)
+    """
+    return bool(4*a**3 + 27*b ** 2)
+
+def random_elliptic_curve(p: int) -> EllipticCurve:
+    """
+    Returns random elliptic curve over finite Fp field.
+    :param p:
+    :return:
+    """
+    assert p > 1, "p must be greater than 1"
+    for _ in range(MAX_RANDOM_CURVE_ITERS):
+        a = random.randint(0, p)
+        b = random.randint(0, p)
+        if define_appropriate_curve(a, b):
+            return EllipticCurve(a, b, p)
+    else:
+        raise RuntimeError("Cannot generate random elliptic curve over finite Fp field. If you sure it exists,"
+                           " try increasing the MAX_RANDOM_CURVE_ITERS parameter.")
+
 
 class EllipticCurvePoint(FieldElement):
     """
@@ -45,7 +71,7 @@ class EllipticCurve(Field):
     """
 
     def __init__(self, a: int, b: int, p: int):
-        assert 4*a**3 + 27*b ** 2, "4a^3 + 27b^2 must not be zero"
+        assert define_appropriate_curve(a, b), "4a^3 + 27b^2 must not be zero"
         self.a = a
         self.b = b
         self.p = p
