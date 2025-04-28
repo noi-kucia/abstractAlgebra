@@ -107,6 +107,8 @@ class EllipticCurve(Field):
             assert isinstance(x, int) or x == INFTY, f"x expected to be an integer or INFTY, got {type(x)} instead"
             assert isinstance(y, int) or y == INFTY, f"y expected to be an integer or INFTY, got {type(y)} instead"
 
+        raise NotImplementedError
+
     def __str__(self):
         return f"<{self.__class__.__name__}: x^3 + {self.a.value}x + {self.b.value} (mod {self.p})>"
 
