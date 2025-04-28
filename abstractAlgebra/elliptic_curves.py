@@ -112,6 +112,10 @@ class EllipticCurve(Field):
     def __str__(self):
         return f"<{self.__class__.__name__}: x^3 + {self.a.value}x + {self.b.value} (mod {self.p})>"
 
+    def polynom(self, x: FieldElement) -> FieldElement:
+        assert isinstance(x, FieldElement) and x.field is self, "given x must an element of the cruve's field"
+        return x ** 3 + self.a*x + self.b
+
     @override
     def sqrt(self, element: EllipticCurvePoint) -> EllipticCurvePoint | None:
         raise NotImplementedError
