@@ -45,7 +45,7 @@ class EllipticCurvePoint(FieldElement):
                  y: int | INFTY,
                  *,
                  value: Iterable[int | INFTY] = None,
-                 structure: AbstractStructure):
+                 structure: AbstractStructure = None):
         value = value or (x, y)
         super().__init__(value=value, structure=structure)
         self.value: Tuple[int | INFTY, int | INFTY]
