@@ -8,7 +8,7 @@ from decimal import Decimal
 import random
 
 INFTY = Decimal('Infinity')
-MAX_RANDOM_CURVE_ITERS = 16
+MAX_RANDOM_CURVE_ITERS = 64
 
 def define_appropriate_curve(a: FieldElement, b: FieldElement) -> bool:
     """
