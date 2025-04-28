@@ -116,7 +116,7 @@ class EllipticCurve(Field):
         return f"<{self.__class__.__name__}: x^3 + {self.a.value}x + {self.b.value} (mod {self.p})>"
 
     def polynom(self, x: FieldElement) -> FieldElement:
-        assert isinstance(x, FieldElement) and x.field is self, "given x must an element of the cruve's field"
+        assert isinstance(x, FieldElement) and x.field is self.field, "given x must an element of the cruve's field"
         return x ** 3 + self.a*x + self.b
 
     def get_random_point(self) -> EllipticCurvePoint:
