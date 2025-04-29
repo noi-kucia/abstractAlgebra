@@ -241,6 +241,10 @@ class GroupElement(StructureElement):
         """Alias for additive inverse since on groups there's defined only addition"""
         return self.ainverse
 
+    @property
+    def group(self) -> Group:
+        return self.__structure__
+
 
 class Group(AbstractStructure, metaclass=ABCMeta):
     """
