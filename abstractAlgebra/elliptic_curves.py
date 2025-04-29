@@ -161,11 +161,6 @@ class EllipticCurve(Field):
             raise RuntimeError(f"Cannot generate random point of the {self}. If you sure it exists,"
                                " try increasing the MAX_RANDOM_CURVE_ITERS parameter.")
 
-    @override
-    def element_additive_inverse(self, element: EllipticCurvePoint) -> EllipticCurvePoint:
-        element.y = element.y.ainverse
-        return element
-
     def __contains__(self, item):
 
         if isinstance(item, EllipticCurvePoint) and item.structure == self:
@@ -178,6 +173,10 @@ class EllipticCurve(Field):
             else:
                 raise AttributeError(f"Expected 2 values to be unpacked, got {len(item)}")
 
+    @override
+    def element_additive_inverse(self, element: EllipticCurvePoint) -> EllipticCurvePoint:
+        element.y = element.y.ainverse
+        return element
 
     @override
     def sqrt(self, element: EllipticCurvePoint) -> EllipticCurvePoint | None:
