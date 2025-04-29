@@ -10,11 +10,13 @@ import random
 INFTY = Decimal('Infinity')
 MAX_RANDOM_CURVE_ITERS = 64
 
+
 def define_appropriate_curve(a: FieldElement, b: FieldElement) -> bool:
     """
     Returns true if x^3 + ax + b is non-singular (4a^3 + 27b^2 != 0)
     """
-    return bool(4*a**3 + 27*b ** 2)
+    return bool(4 * a ** 3 + 27 * b ** 2)
+
 
 def random_elliptic_curve(p: int) -> EllipticCurve:
     """
