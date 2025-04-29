@@ -292,27 +292,24 @@ class Zn(Group):
 
     @override
     def elements_eq(self, element: GroupElement, other: Any) -> bool:
-        if isinstance(other, StructureElement) and other.structure == element.structure:
-            return element.value == other.value
-        if isinstance(other, int):
-            return element.value == other % self.n
-        return element.value == other
+        try:
+            return element.value == self(other).value
+        except AssertionError:
+            return element.value == other
 
     @override
     def elements_ge(self, element: GroupElement, other: Any) -> bool:
-        if isinstance(other, StructureElement) and other.structure == element.structure:
-            return element.value >= other.value
-        if isinstance(other, int):
-            return element.value >= other % self.n
-        return element.value >= other
+        try:
+            return element.value >= self(other).value
+        except AssertionError:
+            return element.value >= other
 
     @override
     def elements_gt(self, element: GroupElement, other: Any) -> bool:
-        if isinstance(other, StructureElement) and other.structure == element.structure:
-            return element.value > other.value
-        if isinstance(other, int):
-            return element.value > other % self.n
-        return element.value > other
+        try:
+            return element.value > self(other).value
+        except AssertionError:
+            return element.value > other
 
     @override
     def elements_le(self, element: GroupElement, other: Any) -> bool:
@@ -324,11 +321,10 @@ class Zn(Group):
 
     @override
     def elements_lt(self, element: GroupElement, other: Any) -> bool:
-        if isinstance(other, StructureElement) and other.structure == element.structure:
-            return element.value < other.value
-        if isinstance(other, int):
-            return element.value < other % self.n
-        return element.value < other
+        try:
+            return element.value < self(other).value
+        except AssertionError:
+            return element.value < other
 
     @override
     def elements_add(self, a, b):
