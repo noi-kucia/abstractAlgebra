@@ -74,7 +74,7 @@ class EllipticCurve(Field):
         assert define_appropriate_curve(a, b), "4a^3 + 27b^2 must not be zero"
         self.a = a
         self.b = b
-        self.p = p
+        self.field = Fp(p)
 
     def __call__(self, *args, **kwargs) -> EllipticCurvePoint:
         """
@@ -109,6 +109,7 @@ class EllipticCurve(Field):
                     # TODO: finish
                     ...
         return False
+
     @override
     def sqrt(self, element: EllipticCurvePoint) -> EllipticCurvePoint | None:
         raise NotImplementedError
@@ -121,4 +122,8 @@ class EllipticCurve(Field):
     @property
     def mneutral(self) -> EllipticCurvePoint:
         """neutral element of multiplication"""
+
+    @property
+    def p(self):
+        return self.field.p
 
