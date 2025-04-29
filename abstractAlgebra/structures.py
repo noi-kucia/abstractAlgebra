@@ -439,8 +439,15 @@ class Fp(Zn, Field):
         super().__init__(p)
         self.__nonresidue__ = None
 
-    def __call__(self, value: int) -> FieldElement:
-        assert isinstance(value, int), "num must be integer"
+    def __call__(self, value: int | FieldElement) -> FieldElement:
+
+        # the member of equal field is given
+        if isinstance(value, FieldElement) and value.field == self:
+            value.__structure__ = self
+            return value
+
+        # integer is given
+        assert isinstance(value, int), "num must be integer or the member of the equal field"
         return FieldElement(value=value % self.p, structure=self)
 
     def get_random_element(self) -> FieldElement:
