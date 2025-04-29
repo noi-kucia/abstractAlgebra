@@ -564,6 +564,20 @@ class Fp(Zn, Field):
         raise NotImplementedError(f"Division is undefined for types: {type(element)}, {type(b)}")
 
     @override
+    def elements_floordiv(self, element: StructureElement, other: Any) -> FieldElement:
+        """
+        Actually, this operation isn't a part of the field, but it was made for convenience.
+        Works like floor division with integers.
+        """
+
+        try:
+            other_element = self(other)
+        except (AttributeError, AssertionError):
+            raise AttributeError(f"given object: {other} cannot be considered as an {type(self)} element")
+
+        return self(element.value % other_element.value)
+
+    @override
     def elements_mod(self, element: FieldElement, modulus: Any) -> FieldElement:
 
         # modulus is a structure element
