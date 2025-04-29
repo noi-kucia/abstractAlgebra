@@ -1,4 +1,3 @@
-import random
 import unittest
 from abstractAlgebra.structures import Fp
 from hypothesis import given, assume, example, strategies as st
