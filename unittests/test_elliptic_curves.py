@@ -44,7 +44,7 @@ class TestElliptic(unittest.TestCase):
 
     @given(
         x=st.integers(0, 1000),
-        delta=st.integers(0, 100),
+        delta=st.integers(1, 100),
         p=prime_numbers
     )
     def test_contains(self, x, delta, p):
@@ -53,12 +53,15 @@ class TestElliptic(unittest.TestCase):
         """
 
         curve = random_elliptic_curve(p)
-        curve_point = curve.polynom(x)
-        shifted_point = curve_point
+        curve_point = curve(x, curve.polynom(x))
+        shifted_point = (curve_point.x, curve.field(curve_point.y + delta))
 
-        self.assertTrue(curve_point.value in curve, "__contain__ method returns False though the point must belong to it "
+        self.assertTrue(curve_point in curve, "__contain__ method returns False though the point must belong to it "
                                               "(except for the case if random_elliptic_curve function returns bad point)")
-
+        self.assertEqual(shifted_point in curve, shifted_point[1] == curve_point.y, "__contain__ method "
+                                                                                    "returns wrong value")
 
 if __name__ == '__main__':
     unittest.main()
+
+
