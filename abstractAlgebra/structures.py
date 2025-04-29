@@ -4,6 +4,7 @@ Abstract algebra shit it 2 words
 """
 from __future__ import annotations
 
+import random
 from abc import ABCMeta, abstractmethod
 from typing import Iterable, override, Any
 from math import ceil, floor
@@ -138,7 +139,7 @@ class AbstractStructure(metaclass=ABCMeta):
     @property
     def name(self) -> str:
         """Returns the display name of the structure"""
-        return type(self).__name__
+        return type(self).__class__.__name__
 
 
 class StructureElement:
@@ -267,6 +268,12 @@ class Zn(Group):
         return GroupElement(value=value % self.n, structure=self)
 
     @override
+    def __str__(self):
+        if self.n > MAX_STR_ELEMENTS:
+            elements = list(range(ceil(MAX_STR_ELEMENTS / 2))) + ["..."] + list(range(self.n-MAX_STR_ELEMENTS // 2, self.n))
+        return f"<{self.name}: {elements}>"
+
+    @override
     def __iter__(self) -> Iterable[GroupElement]:
         return super().__iter__()
 
@@ -358,6 +365,9 @@ class Zn(Group):
 class FieldElement(GroupElement):
     __structure__: Field
 
+    def is_quadratic_residue(self) -> bool:
+        return self.field.is_quadratic_residue(self)
+
     def __rmul__(self, other):
         return self * other
 
@@ -373,12 +383,20 @@ class FieldElement(GroupElement):
         """Alias for multiplicative inverse since"""
         return self.minverse
 
+    @property
+    def field(self) -> Field:
+        """Alias for self.structure"""
+        return self.structure
+
 
 class Field(AbstractStructure, metaclass=ABCMeta):
     """
     Algebraic field - https://en.wikipedia.org/wiki/Field_(mathematics)
     Supports additive and multiplicative notations.
     """
+
+    def is_quadratic_residue(self, element: FieldElement) -> bool:
+        raise NotImplementedError
 
     @abstractmethod
     def sqrt(self, element: FieldElement) -> FieldElement | None:
@@ -412,6 +430,11 @@ class Fp(Zn, Field):
         assert isinstance(value, int), "num must be integer"
         return FieldElement(value=value % self.p, structure=self)
 
+    def get_random_element(self) -> FieldElement:
+        """Returns random element of this field"""
+        return self(random.randint(0, self.p-1))
+
+    @override
     def is_quadratic_residue(self, element: FieldElement) -> bool:
         # Euler’s criterion
         return not element.value or element ** ((self.p-1)//2) == 1
