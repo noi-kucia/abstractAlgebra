@@ -240,6 +240,22 @@ class EllipticCurve(Field):
         return self(rx, -ry)
 
     @override
+    def elements_mul(self, element: EllipticCurve, other: Any) -> EllipticCurve:
+        """
+        Scalar multiplication of an elliptic curve
+        """
+
+        # fast powering algorithm with addition instead of multiplication
+        ans = self.aneutral
+        while other:
+            if other % 2:
+                ans = (ans + element)
+            element = element + element
+            other //= 2
+
+        return ans
+
+    @override
     def sqrt(self, element: EllipticCurvePoint) -> EllipticCurvePoint | None:
         raise NotImplementedError
 
