@@ -390,6 +390,9 @@ class FieldElement(GroupElement):
     def __rpow__(self, other):
         return self.structure(other) ** self
 
+    def __bool__(self):
+        return self == self.field.aneutral
+
     @property
     def sqrt(self):
         return self.structure.sqrt(self)
