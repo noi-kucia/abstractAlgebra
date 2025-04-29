@@ -83,20 +83,20 @@ class EllipticCurvePoint(FieldElement):
         return f"<{self.__class__.__name__}: {self.value}>"
 
     @property
-    def x(self) -> int:
+    def x(self) -> FieldElement | INFTY:
         return self.value[0]
 
     @x.setter
     def x(self, value: int):
-        self.value = (value, self.value[1])
+        self.value = (self.field(value), self.y)
 
     @property
-    def y(self) -> int:
+    def y(self) -> FieldElement | INFTY:
         return self.value[1]
 
     @y.setter
     def y(self, value: int):
-        self.value = (self.value[0], value)
+        self.value = (self.x, self.field(value))
 
     @property
     def field(self) -> Fp:
