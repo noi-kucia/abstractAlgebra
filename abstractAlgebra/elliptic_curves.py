@@ -89,8 +89,10 @@ class EllipticCurve(Field):
         else:
             raise AttributeError(f"Expected 1 or 2 arguments, got {len(args)}")
 
-        assert isinstance(x, int) or x == INFTY, f"x expected to be an integer or INFTY, got {type(x)} instead"
-        assert isinstance(y, int) or y == INFTY, f"y expected to be an integer or INFTY, got {type(y)} instead"
+        if not isinstance(x, FieldElement) and x.structure is self.field:
+            x = self.field(x)
+        if not isinstance(y, FieldElement) and y.structure is self.field:
+            y = self.field(y)
 
         # TODO: check whether point lies on the curve
 
