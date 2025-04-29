@@ -136,6 +136,13 @@ class AbstractStructure(metaclass=ABCMeta):
     def __repr__(self):
         return self.__str__()
 
+    @abstractmethod
+    def __eq__(self, other):
+        """
+        Each structure must implement its equality with other structures
+        """
+        return self is other
+
     @property
     def name(self) -> str:
         """Returns the display name of the structure"""
@@ -266,6 +273,12 @@ class Zn(Group):
     def __call__(self, value: int) -> GroupElement:
         assert isinstance(value, int), "num must be integer"
         return GroupElement(value=value % self.n, structure=self)
+
+    def __eq__(self, other):
+        """
+        Every other Zn with the same n value is considered equal
+        """
+        return isinstance(other, Zn) and other.n == self.n
 
     @override
     def __str__(self):
