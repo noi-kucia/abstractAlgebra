@@ -51,6 +51,13 @@ class EllipticCurvePoint(FieldElement):
 
         curve = structure
         field = curve.field
+
+        # returning 'zero' element when 0 was passed as an argument
+        if x == 0 and y is None:
+            self.value = (INFTY, INFTY)
+            self.__structure__ = curve
+            return
+
         if x is None or y is None:
             assert len(list(value)) == 2, "value must contain exactly 2 elements"
             x, y = value
@@ -138,6 +145,8 @@ class EllipticCurve(Field):
                 x, y = obj
             elif isinstance(obj, EllipticCurvePoint):
                 x, y = obj.xy
+            elif obj == 0:
+                return self.aneutral
             else:
                 raise AttributeError(f"Cannot built the point from {obj}")
         elif len(args) == 2:
@@ -202,11 +211,19 @@ class EllipticCurve(Field):
 
     @override
     def elements_add(self, self_point: EllipticCurvePoint, other: Any):
+
+        # converting another object to Curve point
         try:
             other_point = self(other)
         except (AssertionError, AttributeError):
             raise AttributeError(f"cannot add {type(self)} and {type(other)} since the second argument cannot be "
                                  f"turned into a {type(self_point)}")
+
+        # case 1 - at least 1 of elements is a 'zero' element
+        if self_point == self.aneutral:
+            return other_point
+        if other_point == self.aneutral:
+            return self_point
 
     @override
     def sqrt(self, element: EllipticCurvePoint) -> EllipticCurvePoint | None:
@@ -215,7 +232,7 @@ class EllipticCurve(Field):
     @property
     def aneutral(self) -> EllipticCurvePoint:
         """neutral element of addition"""
-        self(INFTY, INFTY)
+        return EllipticCurvePoint(0, structure=self)
 
     @property
     def mneutral(self) -> EllipticCurvePoint:
