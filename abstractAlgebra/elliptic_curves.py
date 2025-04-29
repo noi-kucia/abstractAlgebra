@@ -174,10 +174,10 @@ class EllipticCurve(Field):
         if isinstance(item, Iterable):
             if len(item) == 2:
                 x, y = tuple(item)
+                return self.polynom(x) == y
             else:
                 raise AttributeError(f"Expected 2 values to be unpacked, got {len(item)}")
 
-        return self.polynom(x) == y
 
     @override
     def sqrt(self, element: EllipticCurvePoint) -> EllipticCurvePoint | None:

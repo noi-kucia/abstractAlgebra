@@ -530,7 +530,7 @@ class Fp(Zn, Field):
 
         # extracting the power as integer into b variable
         if isinstance(power, StructureElement):
-            if power.structure == not self:
+            if power.structure != self:
                 raise AttributeError(f"cannot use element of another group as power: {power.structure}")
             b = power.value
         elif isinstance(power, int):
