@@ -65,6 +65,16 @@ class TestElliptic(unittest.TestCase):
         point = curve.get_random_point()
         self.assertTrue(point.is_inverse_of(-point), f"{point} isn't inverse of {-point} though must be")
 
+    @given(
+        p=prime_numbers,
+        c=st.integers(0, 5)
+    )
+    def test_scalar_multiplication(self, p, c):
+        curve = random_elliptic_curve(p)
+        point = curve.get_random_point()
+        correct_ans = sum([point for _ in range(c)]) or curve.aneutral
+        self.assertEqual(c*point, correct_ans, f"{c}*{point} must be equal {correct_ans} but it's not")
+
 
 if __name__ == '__main__':
     unittest.main()
