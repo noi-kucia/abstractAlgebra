@@ -149,17 +149,18 @@ class EllipticCurve(Field):
         element.y = element.y.ainverse
         return element
 
-
     def __contains__(self, item):
+
         if isinstance(item, EllipticCurvePoint) and item.structure == self:
             return True
+
         if isinstance(item, Iterable):
             if len(item) == 2:
                 x, y = tuple(item)
-                if isinstance(x, int) and isinstance(y, int):
-                    # TODO: finish
-                    ...
-        return False
+            else:
+                raise AttributeError(f"Expected 2 values to be unpacked, got {len(item)}")
+
+        return self.polynom(x) == y
 
     @override
     def sqrt(self, element: EllipticCurvePoint) -> EllipticCurvePoint | None:
