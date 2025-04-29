@@ -138,6 +138,15 @@ class EllipticCurve(Field):
     def __str__(self):
         return f"<{self.__class__.__name__}: x^3 + {self.a.value}x + {self.b.value} (mod {self.p})>"
 
+    def __eq__(self, other):
+        """
+        Every other elliptic curve with the same a and v values and defined over equal field
+        is considered to be equal
+        """
+        fields_equal = other.field == self.field
+        params_equal = other.a == self.a and other.b == self.b
+        return isinstance(other, EllipticCurve) and params_equal and fields_equal
+
     def polynom(self, x: FieldElement) -> FieldElement:
         assert isinstance(x, FieldElement) and x.field is self.field, "given x must an element of the curve's field"
         return x ** 3 + self.a*x + self.b
