@@ -244,6 +244,7 @@ class EllipticCurve(Field):
         """
         Scalar multiplication of an elliptic curve
         """
+        other = self.field(other)
 
         # fast powering algorithm with addition instead of multiplication
         ans = self.aneutral
