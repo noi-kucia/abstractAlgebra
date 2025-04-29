@@ -236,6 +236,9 @@ class GroupElement(StructureElement):
         """other - self = -self + other"""
         return self.ainverse + other
 
+    def __bool__(self):
+        return self == self.group.neutral
+
     @property
     def inverse(self) -> StructureElement:
         """Alias for additive inverse since on groups there's defined only addition"""
