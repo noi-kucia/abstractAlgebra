@@ -180,8 +180,16 @@ class EllipticCurve(Field):
 
     @override
     def element_additive_inverse(self, element: EllipticCurvePoint) -> EllipticCurvePoint:
-        element.y = element.y.ainverse
-        return element
+        inverse = self(element.x, element.y.ainverse)
+        return inverse
+
+    @override
+    def elements_add(self, self_point: EllipticCurvePoint, other: Any):
+        try:
+            other_point = self(other)
+        except (AssertionError, AttributeError):
+            raise AttributeError(f"cannot add {type(self)} and {type(other)} since the second argument cannot be "
+                                 f"turned into a {type(self_point)}")
 
     @override
     def sqrt(self, element: EllipticCurvePoint) -> EllipticCurvePoint | None:
