@@ -96,6 +96,7 @@ class EllipticCurvePoint(FieldElement):
         """Alias for self.structure"""
         return self.structure
 
+
 class EllipticCurve(Field):
     """
     Elliptic curve over finite field Fp
@@ -110,9 +111,11 @@ class EllipticCurve(Field):
     def __call__(self, *args, **kwargs) -> EllipticCurvePoint:
         """
         Returns an element of this structure based on the given value.
-        It can be either single iterable of 2 integers or 2 integers itself as 2 arguments.
+        It can be either single iterable of 2 objects or 2 objects itself as 2 arguments.
+        Those objects must be either elements of equal to underlying field or something that can construct an Fp element
         """
 
+        # unpacking x, y values
         if len(args) == 1:
             x, y = args[0]
         elif len(args) == 2:
@@ -120,12 +123,15 @@ class EllipticCurve(Field):
         else:
             raise AttributeError(f"Expected 1 or 2 arguments, got {len(args)}")
 
-        if not isinstance(x, FieldElement) and x.structure is self.field:
+        # constructing new field elements when x or y isn't from the equal field
+        if not isinstance(x, FieldElement) and x.structure == self.field:
             x = self.field(x)
-        if not isinstance(y, FieldElement) and y.structure is self.field:
+        if not isinstance(y, FieldElement) and y.structure == self.field:
             y = self.field(y)
 
-        # TODO: check whether point lies on the curve
+        # point must belong to the curve
+        if not (x, y) in self:
+            raise AttributeError(f"{(x, y)} does not define a point in {self}")
 
         return EllipticCurvePoint(x, y, structure=self)
 
