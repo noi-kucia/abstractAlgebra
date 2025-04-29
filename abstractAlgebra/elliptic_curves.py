@@ -96,6 +96,11 @@ class EllipticCurvePoint(FieldElement):
         """Alias for self.structure"""
         return self.structure
 
+    @property
+    def xy(self) -> Tuple[int, int]:
+        """returns the tuple made of x and y values (alias for point.value)"""
+        return self.value
+
 
 class EllipticCurve(Field):
     """
