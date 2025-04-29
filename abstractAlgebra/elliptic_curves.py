@@ -148,8 +148,8 @@ class EllipticCurve(Field):
         return isinstance(other, EllipticCurve) and params_equal and fields_equal
 
     def polynom(self, x: FieldElement) -> FieldElement:
-        assert isinstance(x, FieldElement) and x.field is self.field, "given x must an element of the curve's field"
-        return x ** 3 + self.a*x + self.b
+        x = self.field(x)
+        return x ** 3 + self.a * x + self.b
 
     def get_random_point(self) -> EllipticCurvePoint:
         for _ in range(MAX_RANDOM_CURVE_ITERS):
