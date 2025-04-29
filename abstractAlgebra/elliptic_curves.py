@@ -225,6 +225,20 @@ class EllipticCurve(Field):
         if other_point == self.aneutral:
             return self_point
 
+        # case 2 - points are inverses of each other (returning 0)
+        if self_point == other_point.ainverse:
+            return self.aneutral
+
+        # the rest
+        if self_point != other_point:  # case 3 - p1 != p2
+            m = (self_point.y - other_point.y) / (self_point.x - other_point.x)
+        if self_point == other_point:  # case 4 - p1 == p2
+            m = (3*self_point.x ** 2 + self_point.curve.a) / (2*self_point.y)
+        rx = m ** 2 - self_point.x - other_point.x
+        ry = self_point.y + m*(rx - self_point.x)
+
+        return self(rx, -ry)
+
     @override
     def sqrt(self, element: EllipticCurvePoint) -> EllipticCurvePoint | None:
         raise NotImplementedError
