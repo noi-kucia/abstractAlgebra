@@ -68,6 +68,17 @@ class EllipticCurvePoint(FieldElement):
         super().__init__(value=value, structure=structure)
         self.value: Tuple[FieldElement | INFTY, FieldElement | INFTY]
 
+    def is_inverse_of(self, point: Any):
+        """Checks whether the point is inverse of the given point"""
+
+        # converting the given object into the point
+        try:
+            point = self.curve(point)
+        except (AttributeError, AssertionError):
+            raise AttributeError(f"given object: {point} cannot be considered as a curve's point!")
+
+        return self.x == point.x and self.y == -point.y
+
     def __str__(self):
         return f"<{self.__class__.__name__}: {self.value}>"
 
