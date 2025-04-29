@@ -191,7 +191,7 @@ class EllipticCurve(Field):
         if isinstance(item, Iterable):
             if len(item) == 2:
                 x, y = tuple(item)
-                return self.polynom(x) == y
+                return self.polynom(x) == y ** 2
             else:
                 raise AttributeError(f"Expected 2 values to be unpacked, got {len(item)}")
 
