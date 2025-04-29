@@ -87,27 +87,27 @@ class AbstractStructure(metaclass=ABCMeta):
         raise NotImplementedError(f"{self.__class__.__name__} does not implement multiplicative inverse")
 
     def elements_eq(self, element: StructureElement, other: Any) -> bool:
-        if isinstance(other, StructureElement) and other.structure is element.structure:
+        if isinstance(other, StructureElement) and other.structure == element.structure:
             return element.value == other.value
         return element.value == other
 
     def elements_ge(self, element: StructureElement, other: Any) -> bool:
-        if isinstance(other, StructureElement) and other.structure is element.structure:
+        if isinstance(other, StructureElement) and other.structure == element.structure:
             return element.value >= other.value
         return element.value >= other
 
     def elements_gt(self, element: StructureElement, other: Any) -> bool:
-        if isinstance(other, StructureElement) and other.structure is element.structure:
+        if isinstance(other, StructureElement) and other.structure == element.structure:
             return element.value > other.value
         return element.value > other
 
     def elements_le(self, element: StructureElement, other: Any) -> bool:
-        if isinstance(other, StructureElement) and other.structure is element.structure:
+        if isinstance(other, StructureElement) and other.structure == element.structure:
             return element.value <= other.value
         return element.value <= other
 
     def elements_lt(self, element: StructureElement, other: Any) -> bool:
-        if isinstance(other, StructureElement) and other.structure is element.structure:
+        if isinstance(other, StructureElement) and other.structure == element.structure:
             return element.value < other.value
         return element.value < other
 
@@ -292,7 +292,7 @@ class Zn(Group):
 
     @override
     def elements_eq(self, element: GroupElement, other: Any) -> bool:
-        if isinstance(other, StructureElement) and other.structure is element.structure:
+        if isinstance(other, StructureElement) and other.structure == element.structure:
             return element.value == other.value
         if isinstance(other, int):
             return element.value == other % self.n
@@ -300,7 +300,7 @@ class Zn(Group):
 
     @override
     def elements_ge(self, element: GroupElement, other: Any) -> bool:
-        if isinstance(other, StructureElement) and other.structure is element.structure:
+        if isinstance(other, StructureElement) and other.structure == element.structure:
             return element.value >= other.value
         if isinstance(other, int):
             return element.value >= other % self.n
@@ -308,7 +308,7 @@ class Zn(Group):
 
     @override
     def elements_gt(self, element: GroupElement, other: Any) -> bool:
-        if isinstance(other, StructureElement) and other.structure is element.structure:
+        if isinstance(other, StructureElement) and other.structure == element.structure:
             return element.value > other.value
         if isinstance(other, int):
             return element.value > other % self.n
@@ -316,7 +316,7 @@ class Zn(Group):
 
     @override
     def elements_le(self, element: GroupElement, other: Any) -> bool:
-        if isinstance(other, StructureElement) and other.structure is element.structure:
+        if isinstance(other, StructureElement) and other.structure == element.structure:
             return element.value <= other.value
         if isinstance(other, int):
             return element.value <= other % self.n
@@ -324,7 +324,7 @@ class Zn(Group):
 
     @override
     def elements_lt(self, element: GroupElement, other: Any) -> bool:
-        if isinstance(other, StructureElement) and other.structure is element.structure:
+        if isinstance(other, StructureElement) and other.structure == element.structure:
             return element.value < other.value
         if isinstance(other, int):
             return element.value < other % self.n
@@ -335,7 +335,7 @@ class Zn(Group):
 
         # adding an element of certain structure
         if isinstance(b, StructureElement):
-            if b.structure is self:  # cannot add elements from different structures
+            if b.structure == self:  # cannot add elements from different structures
                 return self((a.value + b.value) % self.n)
             raise AttributeError(f"cannot add elements from different groups: {a.structure} and {b.structure}")
 
@@ -350,7 +350,7 @@ class Zn(Group):
 
         # subtracting an element of certain structure
         if isinstance(b, StructureElement):
-            if b.structure is self:
+            if b.structure == self:
                 return self((a.value - b.value) % self.n)
             raise AttributeError(f"cannot subtract elements from different groups: {a.structure} and {b.structure}")
 
@@ -523,7 +523,7 @@ class Fp(Zn, Field):
 
         # extracting the power as integer into b variable
         if isinstance(power, StructureElement):
-            if power.structure is not self:
+            if power.structure == not self:
                 raise AttributeError(f"cannot use element of another group as power: {power.structure}")
             b = power.value
         elif isinstance(power, int):
