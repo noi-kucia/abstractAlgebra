@@ -517,7 +517,7 @@ class Fp(Zn, Field):
 
         # multiplication with the element of certain structure
         if isinstance(b, StructureElement):
-            if b.structure is self:
+            if b.structure == self:
                 return self((a.value * b.value) % self.p)
             raise AttributeError(f"cannot multiply elements from different groups: {a.structure} and {b.structure}")
 
@@ -557,7 +557,7 @@ class Fp(Zn, Field):
 
         # dividing by a structure element
         if isinstance(b, StructureElement):
-            if b.structure is self:
+            if b.structure == self:
                 return self(element.value * b.minverse.value)
             raise AttributeError(f"cannot divide element of {element.structure} by element of {b.structure}")
 
