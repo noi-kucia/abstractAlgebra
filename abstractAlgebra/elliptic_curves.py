@@ -133,7 +133,13 @@ class EllipticCurve(Field):
 
         # unpacking x, y values
         if len(args) == 1:
-            x, y = args[0]
+            obj = args[0]
+            if isinstance(obj, Iterable):
+                x, y = obj
+            elif isinstance(obj, EllipticCurvePoint):
+                x, y = obj.xy
+            else:
+                raise AttributeError(f"Cannot built the point from {obj}")
         elif len(args) == 2:
             x, y = args
         else:
