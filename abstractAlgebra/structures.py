@@ -63,7 +63,7 @@ class AbstractStructure(metaclass=ABCMeta):
         Should be overridden by subclasses because of possible poor performance.
         """
         if isinstance(b, StructureElement):
-            return self.elements_add(element, b.inverse)
+            return self.elements_add(element, b.ainverse)
         raise NotImplementedError(f"{self.__class__.__name__} does not implement subtraction")
 
     def element_pow(self, element: StructureElement, power, modulo) -> StructureElement | None:
