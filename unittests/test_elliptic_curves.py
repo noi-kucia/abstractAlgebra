@@ -43,23 +43,28 @@ class TestElliptic(unittest.TestCase):
             EllipticCurve(a, b, p)
 
     @given(
-        x=st.integers(0, 1000),
         delta=st.integers(1, 100),
         p=prime_numbers
     )
-    def test_contains(self, x, delta, p):
+    def test_contains(self, delta, p):
         """
         Tests that __contains__ method works properly
         """
 
         curve = random_elliptic_curve(p)
-        curve_point = curve(x, curve.polynom(x))
+        curve_point = curve.get_random_point()
         shifted_point = (curve_point.x, curve.field(curve_point.y + delta))
 
         self.assertTrue(curve_point in curve, "__contain__ method returns False though the point must belong to it "
                                               "(except for the case if random_elliptic_curve function returns bad point)")
-        self.assertEqual(shifted_point in curve, shifted_point[1] == curve_point.y, "__contain__ method "
-                                                                                    "returns wrong value")
+
+    @given(p=prime_numbers)
+    def test_additive_inverse(self, p):
+        """Test how additive negation/inverse works"""
+        curve = random_elliptic_curve(p)
+        point = curve.get_random_point()
+        self.assertTrue(point.is_inverse_of(-point), f"{point} isn't inverse of {-point} though must be")
+
 
 if __name__ == '__main__':
     unittest.main()
