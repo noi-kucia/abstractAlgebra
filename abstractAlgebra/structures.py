@@ -19,7 +19,7 @@ class AbstractStructure(metaclass=ABCMeta):
     """
     __elements__: Iterable  # set of all structure elements
 
-    def elements_add(self, a: StructureElement, b: Any) -> StructureElement:
+    def elements_add(self, element: StructureElement, other: Any) -> StructureElement:
         """
         Every group with addictive notation available must implement this method.
         When some structure element got __add__ call it should pass this call to this method with itself as the first argument.
@@ -27,7 +27,7 @@ class AbstractStructure(metaclass=ABCMeta):
         """
         raise NotImplementedError(f"{self.__class__.__name__} does not implement addition")
 
-    def elements_mul(self, a: StructureElement, b: Any) -> StructureElement:
+    def elements_mul(self, element: StructureElement, other: Any) -> StructureElement:
         """
         Every structure with multiplicative notation available must implement this method.
         When some structure element got __mul__ call it should pass this call to this method with itself as the first argument.
@@ -327,19 +327,19 @@ class Zn(Group):
             return element.value < other
 
     @override
-    def elements_add(self, a, b):
+    def elements_add(self, element, other):
 
         # adding an element of certain structure
-        if isinstance(b, StructureElement):
-            if b.structure == self:  # cannot add elements from different structures
-                return self((a.value + b.value) % self.n)
-            raise AttributeError(f"cannot add elements from different groups: {a.structure} and {b.structure}")
+        if isinstance(other, StructureElement):
+            if other.structure == self:  # cannot add elements from different structures
+                return self((element.value + other.value) % self.n)
+            raise AttributeError(f"cannot add elements from different groups: {element.structure} and {other.structure}")
 
         # adding an integer
-        if isinstance(b, int):
-            return self((a.value + b) % self.n)
+        if isinstance(other, int):
+            return self((element.value + other) % self.n)
 
-        raise NotImplementedError(f"Addition is undefined for types: {type(a)}, {type(b)}")
+        raise NotImplementedError(f"Addition is undefined for types: {type(element)}, {type(other)}")
 
     @override
     def elements_sub(self, a: GroupElement, b: Any) -> GroupElement:
@@ -509,17 +509,17 @@ class Fp(Zn, Field):
             raise RuntimeError(f"Exceeded maximum number of iterations when finding sqrt of  {element}")
 
     @override
-    def elements_mul(self, a: StructureElement, b: Any) -> FieldElement:
+    def elements_mul(self, element: StructureElement, other: Any) -> FieldElement:
 
         # multiplication with the element of certain structure
-        if isinstance(b, StructureElement):
-            if b.structure == self:
-                return self((a.value * b.value) % self.p)
-            raise AttributeError(f"cannot multiply elements from different groups: {a.structure} and {b.structure}")
+        if isinstance(other, StructureElement):
+            if other.structure == self:
+                return self((element.value * other.value) % self.p)
+            raise AttributeError(f"cannot multiply elements from different groups: {element.structure} and {other.structure}")
 
         # with integer
-        if isinstance(b, int):
-            return self((a.value * b) % self.p)
+        if isinstance(other, int):
+            return self((element.value * other) % self.p)
 
     @override
     def element_pow(self, base: FieldElement, power, modulo) -> FieldElement:
