@@ -35,7 +35,7 @@ class TestElliptic(unittest.TestCase):
         """
 
         # initializing with integers
-        if 4*a**3 + 27*b ** 2 == 0 or p <= 1:
+        if (4*a**3 + 27*b ** 2) % p == 0 or p <= 1:
             # must return an assertion error because for such a and b, an elliptic curve cannot be constructed
             self.assertRaises(AssertionError, EllipticCurve, *(a, b, p))
         else:
