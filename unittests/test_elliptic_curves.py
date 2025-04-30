@@ -72,7 +72,7 @@ class TestElliptic(unittest.TestCase):
     def test_scalar_multiplication(self, p, c):
         curve = random_elliptic_curve(p)
         point = curve.get_random_point()
-        correct_ans = sum([point for _ in range(c)]) or curve.aneutral
+        correct_ans = sum([point for _ in range(curve.field(c).value)]) or curve.aneutral
         self.assertEqual(c*point, correct_ans, f"{c}*{point} must be equal {correct_ans} but it's not")
 
 
