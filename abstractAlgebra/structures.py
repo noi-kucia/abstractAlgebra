@@ -237,7 +237,7 @@ class GroupElement(StructureElement):
         return self.ainverse + other
 
     def __bool__(self):
-        return self == self.group.neutral
+        return self != self.group.aneutral
 
     @property
     def inverse(self) -> StructureElement:
@@ -257,8 +257,13 @@ class Group(AbstractStructure, metaclass=ABCMeta):
 
     @property
     @abstractmethod
-    def neutral(self) -> StructureElement:
+    def aneutral(self) -> StructureElement:
         """Returns neutral element of the algebraic group"""
+
+    @property
+    def neutral(self) -> StructureElement:
+        """A shortcut for neutral element"""
+        return self.neutral
 
     @property
     def e(self) -> StructureElement:
@@ -369,7 +374,7 @@ class Zn(Group):
 
     @override
     @property
-    def neutral(self):
+    def aneutral(self):
         return self(0)
 
     @override
@@ -391,7 +396,7 @@ class FieldElement(GroupElement):
         return self.structure(other) ** self
 
     def __bool__(self):
-        return self == self.field.aneutral
+        return self != self.field.aneutral
 
     @property
     def sqrt(self):
@@ -420,11 +425,6 @@ class Field(AbstractStructure, metaclass=ABCMeta):
     @abstractmethod
     def sqrt(self, element: FieldElement) -> FieldElement | None:
         """Returns sqrt of the given field element or None if it doesn't exist"""
-
-    @property
-    @abstractmethod
-    def aneutral(self) -> FieldElement:
-        """neutral element of addition"""
 
     @property
     @abstractmethod
