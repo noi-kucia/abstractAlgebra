@@ -127,11 +127,11 @@ class EllipticCurve(Field):
     Elliptic curve over finite field Fp
     """
 
-    def __init__(self, a: int, b: int, p: int):
-        assert define_appropriate_curve(a, b), "4a^3 + 27b^2 must not be zero"
-        self.a = a
-        self.b = b
+    def __init__(self, a: Any, b: Any, p: int):
         self.field = Fp(p)
+        self.a = self.field(a)
+        self.b = self.field(b)
+        assert define_appropriate_curve(self.a, self.b), "4a^3 + 27b^2 must not be zero"
 
     def __call__(self, *args, **kwargs) -> EllipticCurvePoint:
         """
