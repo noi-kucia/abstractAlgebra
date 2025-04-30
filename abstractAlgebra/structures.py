@@ -585,7 +585,7 @@ class Fp(Zn, Field):
         except (AttributeError, AssertionError):
             raise AttributeError(f"given object: {other} cannot be considered as an {type(self)} element")
 
-        return self(element.value % other_element.value)
+        return self(element.value // other_element.value)
 
     @override
     def elements_mod(self, element: FieldElement, modulus: Any) -> FieldElement:
