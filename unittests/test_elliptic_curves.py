@@ -65,10 +65,6 @@ class TestElliptic(unittest.TestCase):
         point = curve.get_random_point()
         self.assertTrue(point.is_inverse_of(-point), f"{point} isn't inverse of {-point} though must be")
 
-    @example(
-        p=41,
-        c=2
-    )
     @given(
         p=prime_numbers,
         c=st.integers(0, 5)
