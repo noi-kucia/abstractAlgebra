@@ -92,6 +92,7 @@ class EllipticCurvePoint(FieldElement):
         return f"<{self.__class__.__name__}: {self.value}>"
 
     @override
+    @property
     def ainverse(self) -> EllipticCurvePoint | None:
         if self == self.curve.aneutral:
             return self.curve.aneutral
