@@ -60,7 +60,6 @@ class EllipticCurvePoint(FieldElement):
             self.__structure__ = curve
             return
 
-
         if x is None or y is None:
             assert len(list(value)) == 2, "value must contain exactly 2 elements"
             x, y = value
