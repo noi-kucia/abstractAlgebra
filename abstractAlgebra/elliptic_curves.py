@@ -157,9 +157,11 @@ class EllipticCurve(Field):
             raise AttributeError(f"Expected 1 or 2 arguments, got {len(args)}")
 
         # constructing new field elements when x or y isn't from the equal field
-        if not isinstance(x, FieldElement) and x != INFTY and x.structure != self.field:
+        field_element = isinstance(x, FieldElement)
+        if (not field_element and x != INFTY) or (field_element and x.structure != self.field):
             x = self.field(x)
-        if not isinstance(y, FieldElement) and y != INFTY and y.structure != self.field:
+        field_element = isinstance(y, FieldElement)
+        if (not field_element and y != INFTY) or (field_element and y.structure != self.field):
             y = self.field(y)
 
         # point must belong to the curve
