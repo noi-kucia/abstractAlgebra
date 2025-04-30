@@ -53,10 +53,13 @@ class EllipticCurvePoint(FieldElement):
         field = curve.field
 
         # returning 'zero' element when 0 was passed as an argument
-        if x == 0 and y is None:
+        zero_passed = x == 0 and y is None
+        infty_passed = INFTY == x and INFTY == y
+        if zero_passed or infty_passed:
             self.value = (INFTY, INFTY)
             self.__structure__ = curve
             return
+
 
         if x is None or y is None:
             assert len(list(value)) == 2, "value must contain exactly 2 elements"
@@ -155,9 +158,9 @@ class EllipticCurve(Field):
             raise AttributeError(f"Expected 1 or 2 arguments, got {len(args)}")
 
         # constructing new field elements when x or y isn't from the equal field
-        if not isinstance(x, FieldElement) or x.structure != self.field:
+        if not isinstance(x, FieldElement) and x != INFTY and x.structure != self.field:
             x = self.field(x)
-        if not isinstance(y, FieldElement) or y.structure != self.field:
+        if not isinstance(y, FieldElement) and y != INFTY and y.structure != self.field:
             y = self.field(y)
 
         # point must belong to the curve
@@ -200,6 +203,8 @@ class EllipticCurve(Field):
         if isinstance(item, Iterable):
             if len(item) == 2:
                 x, y = tuple(item)
+                if x == y == INFTY:
+                    return True
                 return self.polynom(x) == y ** 2
             else:
                 raise AttributeError(f"Expected 2 values to be unpacked, got {len(item)}")
@@ -244,13 +249,13 @@ class EllipticCurve(Field):
         """
         Scalar multiplication of an elliptic curve
         """
-        other = self.field(other)
+        other = self.field(other).value
 
         # fast powering algorithm with addition instead of multiplication
         ans = self.aneutral
         while other:
             if other % 2:
-                ans = (ans + element)
+                ans += element
             element = element + element
             other //= 2
 
