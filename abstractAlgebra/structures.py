@@ -616,6 +616,12 @@ class Fp(Zn, Field):
 
         return self(inv_prev)
 
+    def __contains__(self, item):
+        from_equal_field = isinstance(item, FieldElement) and item.structure == self
+        fits_in = isinstance(item, int) and 0 < item < self.p
+        return from_equal_field or fits_in
+
+
     @property
     def aneutral(self) -> FieldElement:
         return self(0)
